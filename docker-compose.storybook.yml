@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  storybook-staging:
+    image: nginx:alpine
+    container_name: colombian-storybook-staging
+    restart: unless-stopped
+    volumes:
+      - ~/apps/storybook/staging:/usr/share/nginx/html:ro
+      - ./nginx-storybook.conf:/etc/nginx/conf.d/default.conf:ro
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.storybook-staging.rule=Host(`storybook-stg.colombiansupply.com`)"
+      - "traefik.http.routers.storybook-staging.entrypoints=websecure"
+      - "traefik.http.routers.storybook-staging.tls=true"
+      - "traefik.http.routers.storybook-staging.tls.certresolver=letsencrypt"
+      - "traefik.http.services.storybook-staging.loadbalancer.server.port=80"
+    networks:
+      - traefik-public
+
+  storybook-production:
+    image: nginx:alpine
+    container_name: colombian-storybook-production
+    restart: unless-stopped
+    volumes:
+      - ~/apps/storybook/production:/usr/share/nginx/html:ro
+      - ./nginx-storybook.conf:/etc/nginx/conf.d/default.conf:ro
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.storybook-production.rule=Host(`storybook.colombiansupply.com`)"
+      - "traefik.http.routers.storybook-production.entrypoints=websecure"
+      - "traefik.http.routers.storybook-production.tls=true"
+      - "traefik.http.routers.storybook-production.tls.certresolver=letsencrypt"
+      - "traefik.http.services.storybook-production.loadbalancer.server.port=80"
+      # Basic auth for production (optional - remove if you want public access)
+      # - "traefik.http.routers.storybook-production.middlewares=storybook-auth"
+      # - "traefik.http.middlewares.storybook-auth.basicauth.users=admin:$$apr1$$..."
+    networks:
+      - traefik-public
+
+networks:
+  traefik-public:
+    external: true
+

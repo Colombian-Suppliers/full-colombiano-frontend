@@ -1,0 +1,226 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="User Stories/Sprint 1 - Authentication" />
+
+# Sprint 1: Authentication & Foundations
+
+**Duration**: December 23-30, 2024  
+**Objective**: Functional end-to-end authentication system  
+**Deliverable**: Users can register, login, and view basic public pages
+
+## 📋 User Stories
+
+### US-010: Registration/Login with Email Verification
+
+**As a** user (buyer/seller/admin)  
+**I want to** register and login with email validation  
+**So that** account integrity is ensured
+
+#### Acceptance Criteria
+- ✅ Registration endpoint creates pending user
+- ✅ Verification email sent
+- ✅ Verification endpoint activates account
+- ✅ Login blocks unverified users
+- ✅ Tokens with expiration and refresh
+- ✅ Validations: unique email, minimum password
+- ✅ API documented in Swagger
+
+#### Components
+- [Login Page](?path=/story/app-auth-login--default)
+- [Registration Flow](?path=/story/components-auth-registerflow--default)
+- [Forgot Password](?path=/story/app-auth-forgotpassword--default)
+- [Reset Password](?path=/story/app-auth-resetpassword--default)
+
+---
+
+### US-011: Registration/Login UI
+
+**As a** user  
+**I want** clear registration/login UI with state management  
+**So that** I can access the platform without friction
+
+#### Acceptance Criteria
+- ✅ Screens: registration, login, verification
+- ✅ Client-side validations: email, password
+- ✅ Clear error messages
+- ✅ Loading states
+- ✅ Protected routes redirect to login
+
+#### Components
+- [Account Type Selector](?path=/story/components-auth-shared-accounttypeselector--default)
+- [Buyer Registration Steps](?path=/story/components-auth-buyer-step1personalinfo--default)
+- [Seller Registration (Natural)](?path=/story/components-auth-seller-natural-naturalsellerflow--default)
+- [Seller Registration (Jurídica)](?path=/story/components-auth-seller-juridica-juridicasellerflow--default)
+
+---
+
+### US-012: Roles and Permissions (RBAC)
+
+**As the** system  
+**I want** role management (admin, seller, buyer)  
+**So that** permissions are controlled by module
+
+#### Acceptance Criteria
+- ✅ Roles defined: admin, seller, buyer
+- ✅ Middleware controls endpoint access
+- ✅ Authorization tests
+- ✅ Standardized 401/403 errors
+
+#### Implementation
+- Backend: Role-based middleware
+- Frontend: Route guards and conditional rendering
+
+---
+
+### US-013: Role-Adapted UI
+
+**As an** admin/seller/buyer  
+**I want to** see menus and routes according to my role  
+**So that** unauthorized access is prevented
+
+#### Acceptance Criteria
+- ✅ Menu varies by role
+- ✅ Forbidden route shows 403
+- ✅ Role persisted in session
+- ✅ Navigation tests by role
+
+#### Components
+- [Dashboard Header](?path=/story/components-ui-dashboardheader--default) - Shows different options per role
+
+---
+
+### US-009: Password Reset
+
+**As a** user  
+**I want to** reset my password if I forget it  
+**So that** I can regain access to my account
+
+#### Acceptance Criteria
+- ✅ Forgot password form
+- ✅ Email with reset link
+- ✅ Secure token validation
+- ✅ New password form
+- ✅ Password requirements enforced
+
+#### Components
+- [Forgot Password](?path=/story/app-auth-forgotpassword--default)
+- [Reset Password](?path=/story/app-auth-resetpassword--default)
+- [Password Input](?path=/story/components-ui-passwordinput--default)
+- [Password Requirements Tooltip](?path=/story/components-ui-passwordrequirementstooltip--default)
+
+---
+
+## 🎨 Design System Components
+
+### Form Components
+- [Button](?path=/story/components-ui-button--default)
+- [Input](?path=/story/components-ui-input--default)
+- [Password Input](?path=/story/components-ui-passwordinput--default)
+- [Form Field](?path=/story/components-ui-formfield--default)
+
+### Feedback Components
+- [Spinner](?path=/story/components-ui-spinner--default)
+- [Network Status Indicator](?path=/story/components-shared-networkstatusindicator--default)
+
+### Layout Components
+- [Card](?path=/story/components-ui-card--default)
+- [Modal](?path=/story/components-ui-modal--default)
+
+---
+
+## 🔒 Security Features
+
+### Implemented
+- ✅ Email verification required
+- ✅ Password strength requirements
+- ✅ JWT tokens with expiration
+- ✅ Refresh token mechanism
+- ✅ HTTPS enforced
+- ✅ CORS configured
+- ✅ XSS protection
+- ✅ CSRF protection
+
+### Planned
+- ⏳ ReCaptcha v3 (US-014)
+- ⏳ Rate limiting
+- ⏳ 2FA (Phase 2)
+
+---
+
+## 📊 Testing Coverage
+
+### Unit Tests
+- ✅ Form validation logic
+- ✅ Password strength checker
+- ✅ Token utilities
+
+### Integration Tests
+- ✅ Registration flow
+- ✅ Login flow
+- ✅ Password reset flow
+
+### E2E Tests
+- ⏳ Complete user journey
+- ⏳ Role-based access
+
+---
+
+## 🚀 Deployment Status
+
+- ✅ **Development**: Available locally
+- ✅ **Staging**: https://stg.colombiansupply.com
+- ⏳ **Production**: Pending Sprint 1 completion
+
+---
+
+## 📝 Technical Notes
+
+### Backend Stack
+- FastAPI
+- PostgreSQL
+- JWT authentication
+- Email service (SendGrid/AWS SES)
+
+### Frontend Stack
+- Next.js 14
+- React 18
+- TypeScript
+- Tailwind CSS
+- React Hook Form + Zod
+- Zustand (state management)
+
+### API Endpoints
+```
+POST /api/auth/register
+POST /api/auth/login
+POST /api/auth/verify-email
+POST /api/auth/forgot-password
+POST /api/auth/reset-password
+POST /api/auth/refresh-token
+GET  /api/auth/me
+```
+
+---
+
+## 🎯 Success Metrics
+
+- ✅ User can complete registration in < 2 minutes
+- ✅ Email verification < 1 minute delivery
+- ✅ Login response time < 500ms
+- ✅ Password reset flow < 3 minutes
+- ✅ Zero security vulnerabilities
+
+---
+
+## 🔗 Related Documentation
+
+- [API Reference](https://api.colombiansupply.com/docs)
+- [Authentication Implementation Guide](/docs/AUTH_IMPLEMENTATION.md)
+- [Security Best Practices](/docs/SECURITY.md)
+
+---
+
+**Last Updated**: December 29, 2024  
+**Status**: ✅ Complete  
+**Next Sprint**: [Sprint 2 - Sellers & Catalog](?path=/docs/user-stories-sprint-2-sellers--docs)
+

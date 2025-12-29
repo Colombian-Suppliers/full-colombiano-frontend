@@ -1,0 +1,155 @@
+name: Deploy Storybook
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Storybook
+        run: npm run build-storybook
+        env:
+          NODE_ENV: production
+
+      - name: Create deployment archive
+        run: |
+          cd storybook-static
+          tar -czf ../storybook-build.tar.gz .
+          cd ..
+
+      - name: Determine environment
+        id: env
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "DEPLOY_ENV=${{ github.event.inputs.environment }}" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            echo "DEPLOY_ENV=production" >> $GITHUB_OUTPUT
+          else
+            echo "DEPLOY_ENV=staging" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Deploy to VPS (Staging)
+        if: steps.env.outputs.DEPLOY_ENV == 'staging'
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT || 22 }}
+          source: "storybook-build.tar.gz"
+          target: "/tmp/"
+
+      - name: Extract and deploy Storybook (Staging)
+        if: steps.env.outputs.DEPLOY_ENV == 'staging'
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT || 22 }}
+          script: |
+            # Create storybook directory if it doesn't exist
+            mkdir -p ~/apps/storybook/staging
+            
+            # Extract new build
+            cd ~/apps/storybook/staging
+            rm -rf *
+            tar -xzf /tmp/storybook-build.tar.gz
+            rm /tmp/storybook-build.tar.gz
+            
+            # Set permissions
+            chmod -R 755 ~/apps/storybook/staging
+            
+            echo "Storybook deployed to staging successfully!"
+
+      - name: Deploy to VPS (Production)
+        if: steps.env.outputs.DEPLOY_ENV == 'production'
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT || 22 }}
+          source: "storybook-build.tar.gz"
+          target: "/tmp/"
+
+      - name: Extract and deploy Storybook (Production)
+        if: steps.env.outputs.DEPLOY_ENV == 'production'
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT || 22 }}
+          script: |
+            # Create storybook directory if it doesn't exist
+            mkdir -p ~/apps/storybook/production
+            
+            # Backup current version
+            if [ -d ~/apps/storybook/production_backup ]; then
+              rm -rf ~/apps/storybook/production_backup
+            fi
+            if [ "$(ls -A ~/apps/storybook/production 2>/dev/null)" ]; then
+              mv ~/apps/storybook/production ~/apps/storybook/production_backup
+              mkdir -p ~/apps/storybook/production
+            fi
+            
+            # Extract new build
+            cd ~/apps/storybook/production
+            tar -xzf /tmp/storybook-build.tar.gz
+            rm /tmp/storybook-build.tar.gz
+            
+            # Set permissions
+            chmod -R 755 ~/apps/storybook/production
+            
+            echo "Storybook deployed to production successfully!"
+
+      - name: Health check (Staging)
+        if: steps.env.outputs.DEPLOY_ENV == 'staging'
+        run: |
+          sleep 5
+          curl -f https://storybook-stg.colombiansupply.com || echo "Warning: Health check failed"
+
+      - name: Health check (Production)
+        if: steps.env.outputs.DEPLOY_ENV == 'production'
+        run: |
+          sleep 5
+          curl -f https://storybook.colombiansupply.com || echo "Warning: Health check failed"
+
+      - name: Notify deployment
+        if: always()
+        run: |
+          echo "Storybook deployment to ${{ steps.env.outputs.DEPLOY_ENV }} completed!"
+          echo "Staging URL: https://storybook-stg.colombiansupply.com"
+          echo "Production URL: https://storybook.colombiansupply.com"
+
