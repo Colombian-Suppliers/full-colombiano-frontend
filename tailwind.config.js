@@ -8,30 +8,49 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        // Primary Color Palette (Green)
+        // Used for: headings, links, buttons, focus states, accents
         primary: {
-          50: '#eff6ff',
-          100: '#dbeafe',
-          200: '#bfdbfe',
-          300: '#93c5fd',
-          400: '#60a5fa',
-          500: '#3b82f6',
-          600: '#2563eb',
-          700: '#1d4ed8',
-          800: '#1e40af',
-          900: '#1e3a8a',
+          50: '#f0f9f0',   // Lightest: background gradients (from-primary-50)
+          100: '#e0f2e0',
+          200: '#c1e5c1',  // Card borders (border-primary-200)
+          300: '#a2d8a2',
+          400: '#83cb83',  // Input hover borders (hover:border-primary-400)
+          500: '#46802f',  // Focus rings, checkboxes (focus:ring-primary-500, accent-primary-500)
+          600: '#3d6b28',  // Links, buttons (text-primary-600, bg-primary-600) - Main brand color
+          700: '#345621',  // Headings, link hover (text-primary-700, hover:text-primary-700)
+          800: '#2b411a',  // Darker shades
+          900: '#222c13',  // Darkest
         },
+        // Secondary Color Palette (Dark Green)
+        // Used for: gradient backgrounds, secondary buttons
         secondary: {
-          50: '#f0fdf4',
-          100: '#dcfce7',
-          200: '#bbf7d0',
-          300: '#86efac',
-          400: '#4ade80',
-          500: '#22c55e',
-          600: '#16a34a',
-          700: '#15803d',
-          800: '#166534',
-          900: '#14532d',
+          50: '#f0f9f0',   // Background gradients (to-secondary-50)
+          100: '#e0f2e0',
+          200: '#c1e5c1',
+          300: '#a2d8a2',
+          400: '#83cb83',
+          500: '#1b5903',  // Medium shades
+          600: '#164d03',  // Secondary buttons (bg-secondary-600)
+          700: '#124102',  // Secondary button hover (hover:bg-secondary-700)
+          800: '#0e3502',
+          900: '#0a2901',
         },
+        // Neutral/Gray Colors (Standard Tailwind grays)
+        // Used extensively throughout the app
+        gray: {
+          50: '#f9fafb',   // Footer backgrounds (bg-gray-50)
+          100: '#f3f4f6',
+          200: '#e5e7eb',  // Borders (border-gray-200)
+          300: '#d1d5db',  // Input borders (border-gray-300)
+          400: '#9ca3af',  // Placeholders, icons (placeholder:text-gray-400, text-gray-400)
+          500: '#6b7280',  // Helper text (text-gray-500)
+          600: '#4b5563',  // Descriptions, labels (text-gray-600)
+          700: '#374151',  // Form labels (text-gray-700)
+          800: '#1f2937',
+          900: '#111827',  // Body text (text-gray-900)
+        },
+        // Additional theme colors
         'background-light': '#f6f7f8',
       },
       fontFamily: {

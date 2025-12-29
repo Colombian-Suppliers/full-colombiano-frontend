@@ -134,19 +134,19 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <Card className="w-full max-w-lg animate-fade-in shadow-lg border-primary-200 p-8">
-        <div className="animate-slide-up mb-8">
-          <h1 className="text-3xl font-bold text-center text-primary-600 mb-3">
-            Bienvenido de vuelta
-          </h1>
-          <p className="text-center text-gray-500 mt-2 text-base">
-            Ingresa tus credenciales para continuar
-          </p>
-        </div>
+    <Card className="bg-white rounded-lg border border-gray-200 shadow-sm w-full max-w-lg animate-fade-in shadow-lg border-primary-200">
+      <div className="px-6 py-4 border-b border-gray-200 animate-slide-up">
+        <h1 className="text-2xl font-bold text-center text-primary-700">
+          Bienvenido de vuelta
+        </h1>
+        <p className="text-center text-gray-600 mt-2">
+          Ingresa tus credenciales para continuar
+        </p>
+      </div>
 
-        <div className="animate-slide-up">
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <div className="px-6 py-4 animate-slide-up">
+
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <FormField
               label="Correo electrónico"
               error={emailError || undefined}
@@ -197,33 +197,32 @@ export default function LoginPage() {
                 {isLoading || isValidating ? 'Verificando...' : 'Iniciar sesión'}
               </Button>
             </div>
-          </form>
-        </div>
+        </form>
+      </div>
 
-        <div className="animate-slide-up mt-8">
-          <div className="text-center space-y-2">
-            <p className="text-sm text-gray-600">
-              <span className="font-bold">¿Aún no tienes cuenta? </span>
-              <Link
-                href={ROUTES.REGISTER}
-                className="text-primary-600 hover:underline hover:text-primary-700 transition-colors"
-              >
-                Regístrate aquí
-              </Link>
-            </p>
-            <p className="text-sm text-gray-600">
-              ¿No has verificado tu email?{' '}
-              <Link
-                href={ROUTES.RESEND_VERIFICATION}
-                className="text-primary-600 hover:underline hover:text-primary-700 transition-colors"
-              >
-                Reenviar verificación
-              </Link>
-            </p>
-          </div>
+      <div className="px-6 py-4 border-t border-gray-200 bg-gray-50 overflow-hidden rounded-b-lg animate-slide-up">
+        <div className="text-center space-y-2">
+          <p className="text-sm text-gray-600">
+            <span className="font-bold">¿Aún no tienes cuenta? </span>
+            <Link
+              href={ROUTES.REGISTER}
+              className="text-primary-600 hover:underline hover:text-primary-700 transition-colors"
+            >
+              Regístrate aquí
+            </Link>
+          </p>
+          <p className="text-sm text-gray-600">
+            ¿No has verificado tu email?{' '}
+            <Link
+              href={ROUTES.RESEND_VERIFICATION}
+              className="text-primary-600 hover:underline hover:text-primary-700 transition-colors"
+            >
+              Reenviar verificación
+            </Link>
+          </p>
         </div>
-      </Card>
-    </div>
+      </div>
+    </Card>
   );
 }
 

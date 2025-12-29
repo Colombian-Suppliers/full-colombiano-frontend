@@ -113,18 +113,17 @@ export default function ForgotPasswordPage() {
 
   if (emailSent) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-        <Card className="w-full max-w-md animate-fade-in shadow-lg border-primary-200 p-8">
-          <div className="animate-slide-up pb-6">
-            <h1 className="text-3xl font-bold text-center text-primary-600 mb-3">
-              Email enviado
-            </h1>
-            <p className="text-center text-gray-500 text-base">
-              Revisa tu bandeja de entrada
-            </p>
-          </div>
+      <Card className="bg-white rounded-lg border border-gray-200 shadow-sm w-full max-w-md animate-fade-in shadow-lg border-primary-200">
+        <div className="px-6 py-4 border-b border-gray-200 animate-slide-up">
+          <h1 className="text-2xl font-bold text-center text-primary-700">
+            Email enviado
+          </h1>
+          <p className="text-center text-gray-600 mt-2">
+            Revisa tu bandeja de entrada
+          </p>
+        </div>
 
-          <div className="animate-slide-up">
+        <div className="px-6 py-4 animate-slide-up">
             <div className="text-center space-y-4">
               <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-md">
                 <p>
@@ -166,26 +165,24 @@ export default function ForgotPasswordPage() {
                   ← Volver al inicio de sesión
                 </Button>
               </div>
-            </div>
           </div>
-        </Card>
-      </div>
+        </div>
+      </Card>
     );
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <Card className="w-full max-w-md animate-fade-in shadow-lg border-primary-200 p-8">
-        <div className="animate-slide-up pb-6">
-          <h1 className="text-3xl font-bold text-center text-primary-600 mb-3">
-            Olvidé mi contraseña
-          </h1>
-          <p className="text-center text-gray-500 text-base">
-            Ingresa tu email para recibir un enlace de recuperación
-          </p>
-        </div>
+    <Card className="bg-white rounded-lg border border-gray-200 shadow-sm w-full max-w-md animate-fade-in shadow-lg border-primary-200">
+      <div className="px-6 py-4 border-b border-gray-200 animate-slide-up">
+        <h1 className="text-2xl font-bold text-center text-primary-700">
+          Olvidé mi contraseña
+        </h1>
+        <p className="text-center text-gray-600 mt-2">
+          Ingresa tu email para recibir un enlace de recuperación
+        </p>
+      </div>
 
-        <div className="animate-slide-up">
+      <div className="px-6 py-4 animate-slide-up">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <Input
               label="Correo electrónico"
@@ -213,22 +210,21 @@ export default function ForgotPasswordPage() {
                 {isLoading ? 'Enviando...' : 'Enviar enlace de recuperación'}
               </Button>
             </div>
-          </form>
-        </div>
+        </form>
+      </div>
 
-        <div className="animate-slide-up pt-6">
-          <p className="text-center text-sm text-gray-600">
-            ¿Recordaste tu contraseña?{' '}
-            <Link
-              href={ROUTES.LOGIN}
-              className="text-primary-600 hover:underline hover:text-primary-700 transition-colors"
-            >
-              Inicia sesión aquí
-            </Link>
-          </p>
-        </div>
-      </Card>
-    </div>
+      <div className="px-6 py-4 border-t border-gray-200 bg-gray-50 overflow-hidden rounded-b-lg animate-slide-up">
+        <p className="text-center text-sm text-gray-600">
+          ¿Recordaste tu contraseña?{' '}
+          <Link
+            href={ROUTES.LOGIN}
+            className="text-primary-600 hover:underline hover:text-primary-700 transition-colors"
+          >
+            Inicia sesión aquí
+          </Link>
+        </p>
+      </div>
+    </Card>
   );
 }
 

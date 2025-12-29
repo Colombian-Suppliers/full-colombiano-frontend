@@ -278,23 +278,22 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <Card className="w-full max-w-4xl mx-auto animate-fade-in shadow-lg border-primary-200 p-8">
-        <div className="animate-slide-up pb-6">
-          <h1 className="text-3xl font-bold text-center text-primary-600 mb-3">
+    <Card className="bg-white rounded-lg border border-gray-200 shadow-sm w-full max-w-4xl animate-fade-in shadow-lg border-primary-200">
+      <div className="px-6 py-4 border-b border-gray-200 animate-slide-up">
+        <h1 className="text-2xl font-bold text-center text-primary-700">
             {step === 1 && 'Crear cuenta'}
             {step === 2 && role === 'seller' && 'Crear cuenta de vendedor'}
             {step >= 2 && role === 'buyer' && 'Crear cuenta'}
             {step >= 3 && role === 'seller' && 'Crear cuenta de vendedor'}
           </h1>
-          {step === 1 && (
-            <p className="text-center text-gray-500 text-base">
-              ¿Qué tipo de cuenta deseas crear?
-            </p>
-          )}
-          {((role === 'buyer' && step >= 2) ||
-            (role === 'seller' && step >= 3)) && (
-            <p className="text-center text-gray-500 mt-2 mb-2">
+        {step === 1 && (
+          <p className="text-center text-gray-600 mt-2">
+            ¿Qué tipo de cuenta deseas crear?
+          </p>
+        )}
+        {((role === 'buyer' && step >= 2) ||
+          (role === 'seller' && step >= 3)) && (
+          <p className="text-center text-gray-600 mt-2 mb-2">
               {role
                 ? `Paso ${getAdjustedStep()} de ${getAdjustedTotalSteps()} - ${
                     role === 'seller'
@@ -308,40 +307,40 @@ export default function RegisterPage() {
                 : ''}
             </p>
           )}
-          {step === 2 && role === 'seller' && (
-            <p className="text-center text-gray-500 text-base">
-              ¿Cómo quieres registrarte?
-            </p>
-          )}
+        {step === 2 && role === 'seller' && (
+          <p className="text-center text-gray-600 mt-2">
+            ¿Cómo quieres registrarte?
+          </p>
+        )}
 
-          {/* Progress Bar */}
-          <div
-            className={`overflow-hidden transition-all duration-800 ${
-              (role === 'buyer' && step >= 2) || (role === 'seller' && step >= 3)
-                ? 'max-h-16 opacity-100 scale-100'
-                : 'max-h-0 opacity-0 scale-0'
-            }`}
-          >
-            <div className="w-full bg-gray-200 rounded-full h-2">
-              <div
-                className="bg-primary-500 h-2 rounded-full transition-all duration-300 ease-in-out"
-                style={{
-                  width: `${(getAdjustedStep() / getAdjustedTotalSteps()) * 100}%`,
-                }}
-              ></div>
-            </div>
-            <div className="flex justify-between text-xs text-gray-500 mt-1">
-              <span>Inicio</span>
-              <span>
-                {Math.round((getAdjustedStep() / getAdjustedTotalSteps()) * 100)}%
-                completado
-              </span>
-              <span>Finalizar</span>
-            </div>
+        {/* Progress Bar */}
+        <div
+          className={`overflow-hidden transition-all duration-800 ${
+            (role === 'buyer' && step >= 2) || (role === 'seller' && step >= 3)
+              ? 'max-h-16 opacity-100 scale-100'
+              : 'max-h-0 opacity-0 scale-0'
+          }`}
+        >
+          <div className="w-full bg-gray-200 rounded-full h-2">
+            <div
+              className="bg-primary-500 h-2 rounded-full transition-all duration-300 ease-in-out"
+              style={{
+                width: `${(getAdjustedStep() / getAdjustedTotalSteps()) * 100}%`,
+              }}
+            ></div>
+          </div>
+          <div className="flex justify-between text-xs text-gray-500 mt-1">
+            <span>Inicio</span>
+            <span>
+              {Math.round((getAdjustedStep() / getAdjustedTotalSteps()) * 100)}%
+              completado
+            </span>
+            <span>Finalizar</span>
           </div>
         </div>
+      </div>
 
-        <div className="animate-slide-up">
+      <div className="px-6 py-4 animate-slide-up">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             {/* Step 1: Account type selection */}
             {step === 1 && (
@@ -462,24 +461,23 @@ export default function RegisterPage() {
                 isLoading={isLoading}
               />
             )}
-          </form>
-        </div>
+        </form>
+      </div>
 
-        {step === 1 && (
-          <div className="animate-slide-up mt-8">
-            <p className="text-center text-sm text-gray-600">
-              <span className="font-bold">¿Ya tienes una cuenta? </span>
-              <Link
-                href={ROUTES.LOGIN}
-                className="text-primary-600 hover:underline hover:text-primary-700 transition-colors"
-              >
-                Inicia sesión aquí
-              </Link>
-            </p>
-          </div>
-        )}
-      </Card>
-    </div>
+      {step === 1 && (
+        <div className="px-6 py-4 border-t border-gray-200 bg-gray-50 overflow-hidden rounded-b-lg animate-slide-up">
+          <p className="text-center text-sm text-gray-600">
+            <span className="font-bold">¿Ya tienes una cuenta? </span>
+            <Link
+              href={ROUTES.LOGIN}
+              className="text-primary-600 hover:underline hover:text-primary-700 transition-colors"
+            >
+              Inicia sesión aquí
+            </Link>
+          </p>
+        </div>
+      )}
+    </Card>
   );
 }
 
