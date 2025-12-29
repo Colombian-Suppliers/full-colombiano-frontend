@@ -3,19 +3,25 @@ import React from 'react';
 import type { Meta, StoryObj } from '@storybook/nextjs';
 import { useState } from 'react';
 import { Card } from '@/components/ui/Card';
+import { AccountTypeSelector } from '@/components/auth/shared';
+import { 
+  Step1PersonalInfo as BuyerStep1PersonalInfo,
+  Step2PersonalInfo as BuyerStep2PersonalInfo,
+  Step3Credentials as BuyerStep3Credentials,
+} from '@/components/auth/buyer';
 import {
-  AccountTypeSelector,
-  BuyerStep1PersonalInfo,
-  BuyerStep2PersonalInfo,
-  BuyerStep3Credentials,
-  SellerStep1PersonType,
-  SellerStep2StoreInfo,
-  NaturalStep2PersonalInfo,
-  NaturalStep3Credentials,
-  JuridicaStep2CompanyInfo,
-  JuridicaStep3Representative,
-  JuridicaStep4Credentials,
-} from '@/components/auth';
+  Step1PersonType as SellerStep1PersonType,
+  Step2StoreInfo as SellerStep2StoreInfo,
+} from '@/components/auth/seller';
+import {
+  Step2PersonalInfo as NaturalStep2PersonalInfo,
+  Step3Credentials as NaturalStep3Credentials,
+} from '@/components/auth/seller/natural';
+import {
+  Step2CompanyInfo as JuridicaStep2CompanyInfo,
+  Step3Representative as JuridicaStep3Representative,
+  Step4Credentials as JuridicaStep4Credentials,
+} from '@/components/auth/seller/juridica';
 
 /**
  * Complete Registration Flow
