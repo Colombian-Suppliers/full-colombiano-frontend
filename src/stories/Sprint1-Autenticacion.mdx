@@ -1,0 +1,226 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Historias de Usuario/Sprint 1 - Autenticación" />
+
+# Sprint 1: Autenticación y Fundamentos
+
+**Duración**: 23-30 de diciembre, 2024  
+**Objetivo**: Sistema de autenticación funcional end-to-end  
+**Entregable**: Los usuarios pueden registrarse, iniciar sesión y ver páginas públicas básicas
+
+## 📋 Historias de Usuario
+
+### US-010: Registro/Login con Verificación por Email
+
+**Como** usuario (comprador/vendedor/admin)  
+**Quiero** registrarme e iniciar sesión con validación por email  
+**Para que** se asegure la integridad de las cuentas
+
+#### Criterios de Aceptación
+- ✅ El endpoint de registro crea un usuario pendiente de verificación
+- ✅ Se envía email de verificación
+- ✅ El endpoint de verificación activa la cuenta
+- ✅ El login bloquea usuarios no verificados
+- ✅ Tokens con expiración y refresh
+- ✅ Validaciones: email único, contraseña mínima
+- ✅ API documentada en Swagger
+
+#### Componentes
+- [Página de Login](?path=/story/app-auth-login--default)
+- [Flujo de Registro](?path=/story/components-auth-registerflow--default)
+- [Olvidé mi Contraseña](?path=/story/app-auth-forgotpassword--default)
+- [Restablecer Contraseña](?path=/story/app-auth-resetpassword--default)
+
+---
+
+### US-011: UI de Registro/Login
+
+**Como** usuario  
+**Quiero** una UI clara de registro/login con manejo de estados  
+**Para que** pueda acceder a la plataforma sin fricción
+
+#### Criterios de Aceptación
+- ✅ Pantallas: registro, login, verificación
+- ✅ Validaciones del cliente: email, contraseña
+- ✅ Mensajes de error claros
+- ✅ Estados de carga
+- ✅ Las rutas protegidas redirigen al login
+
+#### Componentes
+- [Selector de Tipo de Cuenta](?path=/story/components-auth-shared-accounttypeselector--default)
+- [Pasos de Registro Comprador](?path=/story/components-auth-buyer-step1personalinfo--default)
+- [Registro Vendedor (Natural)](?path=/story/components-auth-seller-natural-naturalsellerflow--default)
+- [Registro Vendedor (Jurídica)](?path=/story/components-auth-seller-juridica-juridicasellerflow--default)
+
+---
+
+### US-012: Roles y Permisos (RBAC)
+
+**Como** sistema  
+**Quiero** manejo de roles (admin, vendedor, comprador)  
+**Para que** los permisos sean controlados por módulo
+
+#### Criterios de Aceptación
+- ✅ Roles definidos: admin, seller, buyer
+- ✅ Middleware controla acceso a endpoints
+- ✅ Pruebas de autorización
+- ✅ Errores 401/403 estandarizados
+
+#### Implementación
+- Backend: Middleware basado en roles
+- Frontend: Guardias de ruta y renderizado condicional
+
+---
+
+### US-013: UI Adaptada a Rol
+
+**Como** admin/vendedor/comprador  
+**Quiero** ver menús y rutas según mi rol  
+**Para que** se evite el acceso no autorizado
+
+#### Criterios de Aceptación
+- ✅ El menú varía según el rol
+- ✅ La ruta prohibida muestra 403
+- ✅ El rol persiste en la sesión
+- ✅ Pruebas de navegación por rol
+
+#### Componentes
+- [Encabezado del Dashboard](?path=/story/components-ui-dashboardheader--default) - Muestra diferentes opciones por rol
+
+---
+
+### US-009: Restablecimiento de Contraseña
+
+**Como** usuario  
+**Quiero** restablecer mi contraseña si la olvido  
+**Para que** pueda recuperar el acceso a mi cuenta
+
+#### Criterios de Aceptación
+- ✅ Formulario de olvidé mi contraseña
+- ✅ Email con enlace de restablecimiento
+- ✅ Validación segura del token
+- ✅ Formulario de nueva contraseña
+- ✅ Requisitos de contraseña aplicados
+
+#### Componentes
+- [Olvidé mi Contraseña](?path=/story/app-auth-forgotpassword--default)
+- [Restablecer Contraseña](?path=/story/app-auth-resetpassword--default)
+- [Input de Contraseña](?path=/story/components-ui-passwordinput--default)
+- [Tooltip de Requisitos de Contraseña](?path=/story/components-ui-passwordrequirementstooltip--default)
+
+---
+
+## 🎨 Componentes del Sistema de Diseño
+
+### Componentes de Formulario
+- [Botón](?path=/story/components-ui-button--default)
+- [Input](?path=/story/components-ui-input--default)
+- [Input de Contraseña](?path=/story/components-ui-passwordinput--default)
+- [Campo de Formulario](?path=/story/components-ui-formfield--default)
+
+### Componentes de Retroalimentación
+- [Spinner](?path=/story/components-ui-spinner--default)
+- [Indicador de Estado de Red](?path=/story/components-shared-networkstatusindicator--default)
+
+### Componentes de Layout
+- [Card](?path=/story/components-ui-card--default)
+- [Modal](?path=/story/components-ui-modal--default)
+
+---
+
+## 🔒 Características de Seguridad
+
+### Implementadas
+- ✅ Verificación de email requerida
+- ✅ Requisitos de fortaleza de contraseña
+- ✅ Tokens JWT con expiración
+- ✅ Mecanismo de refresh token
+- ✅ HTTPS forzado
+- ✅ CORS configurado
+- ✅ Protección XSS
+- ✅ Protección CSRF
+
+### Planificadas
+- ⏳ ReCaptcha v3 (US-014)
+- ⏳ Limitación de tasa
+- ⏳ 2FA (Fase 2)
+
+---
+
+## 📊 Cobertura de Pruebas
+
+### Pruebas Unitarias
+- ✅ Lógica de validación de formularios
+- ✅ Verificador de fortaleza de contraseña
+- ✅ Utilidades de tokens
+
+### Pruebas de Integración
+- ✅ Flujo de registro
+- ✅ Flujo de login
+- ✅ Flujo de restablecimiento de contraseña
+
+### Pruebas E2E
+- ⏳ Recorrido completo del usuario
+- ⏳ Acceso basado en roles
+
+---
+
+## 🚀 Estado del Despliegue
+
+- ✅ **Desarrollo**: Disponible localmente
+- ✅ **Staging**: https://stg.colombiansupply.com
+- ⏳ **Producción**: Pendiente de completar Sprint 1
+
+---
+
+## 📝 Notas Técnicas
+
+### Stack Backend
+- FastAPI
+- PostgreSQL
+- Autenticación JWT
+- Servicio de email (SendGrid/AWS SES)
+
+### Stack Frontend
+- Next.js 14
+- React 18
+- TypeScript
+- Tailwind CSS
+- React Hook Form + Zod
+- Zustand (manejo de estado)
+
+### Endpoints de API
+```
+POST /api/auth/register
+POST /api/auth/login
+POST /api/auth/verify-email
+POST /api/auth/forgot-password
+POST /api/auth/reset-password
+POST /api/auth/refresh-token
+GET  /api/auth/me
+```
+
+---
+
+## 🎯 Métricas de Éxito
+
+- ✅ El usuario puede completar el registro en < 2 minutos
+- ✅ Entrega de verificación de email < 1 minuto
+- ✅ Tiempo de respuesta del login < 500ms
+- ✅ Flujo de restablecimiento de contraseña < 3 minutos
+- ✅ Cero vulnerabilidades de seguridad
+
+---
+
+## 🔗 Documentación Relacionada
+
+- [Referencia de API](https://api.colombiansupply.com/docs)
+- [Guía de Implementación de Autenticación](/docs/AUTH_IMPLEMENTATION.md)
+- [Mejores Prácticas de Seguridad](/docs/SECURITY.md)
+
+---
+
+**Última Actualización**: 29 de diciembre, 2024  
+**Estado**: ✅ Completo  
+**Siguiente Sprint**: [Sprint 2 - Vendedores y Catálogo](?path=/docs/historias-de-usuario-sprint-2-vendedores--docs)
+
