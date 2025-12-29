@@ -3,8 +3,8 @@ import React from 'react';
 import type { Meta, StoryObj } from '@storybook/nextjs';
 import { useState } from 'react';
 import { Card } from '@/components/ui/Card';
-import { SellerStep1PersonType, SellerStep2StoreInfo } from '../';
-import { JuridicaStep2CompanyInfo, JuridicaStep3Representative, JuridicaStep4Credentials } from './';
+import { Step1PersonType, Step2StoreInfo } from '../';
+import { Step2CompanyInfo, Step3Representative, Step4Credentials } from './';
 
 /**
  * Juridica Person Seller Registration Flow
@@ -50,7 +50,7 @@ const JuridicaSellerFlowWrapper = () => {
     switch (step) {
       case 1:
         return (
-          <SellerStep1PersonType
+          <Step1PersonType
             register={register}
             watch={watch}
             next={next}
@@ -60,7 +60,7 @@ const JuridicaSellerFlowWrapper = () => {
         );
       case 2:
         return (
-          <SellerStep2StoreInfo
+          <Step2StoreInfo
             register={register}
             watch={watch}
             errors={errors}
@@ -75,7 +75,7 @@ const JuridicaSellerFlowWrapper = () => {
         );
       case 3:
         return (
-          <JuridicaStep2CompanyInfo
+          <Step2CompanyInfo
             register={register}
             watch={watch}
             setValue={setValue}
@@ -90,7 +90,7 @@ const JuridicaSellerFlowWrapper = () => {
         );
       case 4:
         return (
-          <JuridicaStep3Representative
+          <Step3Representative
             register={register}
             watch={watch}
             errors={errors}
@@ -100,7 +100,7 @@ const JuridicaSellerFlowWrapper = () => {
         );
       case 5:
         return (
-          <JuridicaStep4Credentials
+          <Step4Credentials
             register={register}
             watch={watch}
             errors={errors}

@@ -3,8 +3,8 @@ import React from 'react';
 import type { Meta, StoryObj } from '@storybook/nextjs';
 import { useState } from 'react';
 import { Card } from '@/components/ui/Card';
-import { SellerStep1PersonType, SellerStep2StoreInfo } from '../';
-import { NaturalStep2PersonalInfo, NaturalStep3Credentials } from './';
+import { Step1PersonType, Step2StoreInfo } from '../';
+import { Step2PersonalInfo, Step3Credentials } from './';
 
 /**
  * Natural Person Seller Registration Flow
@@ -46,7 +46,7 @@ const NaturalSellerFlowWrapper = () => {
     switch (step) {
       case 1:
         return (
-          <SellerStep1PersonType
+          <Step1PersonType
             register={register}
             watch={watch}
             next={next}
@@ -56,7 +56,7 @@ const NaturalSellerFlowWrapper = () => {
         );
       case 2:
         return (
-          <SellerStep2StoreInfo
+          <Step2StoreInfo
             register={register}
             watch={watch}
             errors={errors}
@@ -71,7 +71,7 @@ const NaturalSellerFlowWrapper = () => {
         );
       case 3:
         return (
-          <NaturalStep2PersonalInfo
+          <Step2PersonalInfo
             register={register}
             watch={watch}
             setValue={setValue}
@@ -86,7 +86,7 @@ const NaturalSellerFlowWrapper = () => {
         );
       case 4:
         return (
-          <NaturalStep3Credentials
+          <Step3Credentials
             register={register}
             watch={watch}
             errors={errors}

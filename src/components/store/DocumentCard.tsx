@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React from 'react';import FileInput from "@/components/ui/FileInput";
+import React from 'react';import { FileInput } from "@/components/ui/FileInput";
 import { MdVisibility, MdInsertDriveFile } from 'react-icons/md';
 
 const DocumentCard = ({

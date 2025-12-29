@@ -1,6 +1,6 @@
 // @ts-nocheck
 import React from 'react';import { useState } from 'react';
-import Card, { CardHeader, CardContent } from '@/components/ui/Card';
+import { Card, CardHeader, CardContent } from '@/components/ui/Card';
 import {
   MetricBarChart,
   MetricLineChart,
