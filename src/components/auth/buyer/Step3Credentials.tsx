@@ -71,7 +71,6 @@ const RegisterStep3BuyerCredentials = ({
           error={errors.password?.message}
           visible={passwordVisible}
           onToggle={togglePasswordVisibility}
-          showRequirements={true}
           {...register('password', {
             required: 'La contraseña es requerida',
             minLength: { value: 10, message: 'Mínimo 10 caracteres' },

@@ -75,38 +75,60 @@ export default function LoginPage() {
   }, [searchParams, router]);
 
   const onSubmit = async (data: LoginFormData) => {
-    // Always show loading state to simulate API call
     setIsValidating(true);
 
     try {
-      // Simulate API call delay (1000-2000ms to feel realistic)
-      const simulatedDelay = Math.random() * 1000 + 1000;
-      await new Promise((resolve) => setTimeout(resolve, simulatedDelay));
-
-      // Only make real API call if client-side validation passes
-      const result = await login(data);
-      showSuccessToast(TOAST_MESSAGES.LOGIN_SUCCESS);
-
-      // Redirect based on user role immediately after login
-      const currentUser = result.user;
-      if (currentUser?.role) {
-        const role = currentUser.role.toLowerCase();
-        if (role === 'vendor' || role === 'seller') {
-          router.push(ROUTES.DASHBOARD);
+      // Call real API login
+      await login(data);
+      
+      // Wait for localStorage to be set
+      await new Promise(resolve => setTimeout(resolve, 200));
+      
+      // Get user from localStorage to determine redirect
+      const userStr = localStorage.getItem('user');
+      console.log('=== LOGIN DEBUG ===');
+      console.log('User from localStorage:', userStr);
+      
+      if (userStr) {
+        const currentUser = JSON.parse(userStr);
+        console.log('Parsed user:', currentUser);
+        console.log('User role:', currentUser.role);
+        
+        const role = currentUser.role?.toLowerCase();
+        
+        let redirectUrl = '/';
+        
+        if (role === 'admin') {
+          redirectUrl = '/d';
+          console.log('Admin detected, redirecting to dashboard');
+        } else if (role === 'vendor' || role === 'seller') {
+          redirectUrl = '/d';
+          console.log('Vendor detected, redirecting to dashboard');
         } else if (role === 'customer' || role === 'buyer') {
-          router.push(ROUTES.MARKETPLACE);
-        } else {
-          router.push(ROUTES.HOME);
+          redirectUrl = '/marketplace';
+          console.log('Customer detected, redirecting to marketplace');
         }
+        
+        console.log('Final redirect URL:', redirectUrl);
+        console.log('===================');
+        
+        showSuccessToast(TOAST_MESSAGES.LOGIN_SUCCESS);
+        
+        // Force hard redirect
+        setTimeout(() => {
+          window.location.href = redirectUrl;
+        }, 500);
       } else {
-        router.push(ROUTES.HOME);
+        console.log('ERROR: No user in localStorage!');
+        showErrorToast('Error al guardar sesión');
+        setIsValidating(false);
       }
     } catch (err) {
       // Handle real API errors (network issues, server errors, etc.)
+      console.error('Login error:', err);
       const message =
         err instanceof Error ? err.message : TOAST_MESSAGES.LOGIN_ERROR;
       showErrorToast(message);
-    } finally {
       setIsValidating(false);
     }
   };

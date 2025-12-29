@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { Toaster } from 'react-hot-toast';
+import { AuthProvider } from '@/contexts/AuthContext';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -30,8 +31,10 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body>
-        {children}
-        <Toaster position="top-right" />
+        <AuthProvider>
+          {children}
+          <Toaster position="top-right" />
+        </AuthProvider>
       </body>
     </html>
   );

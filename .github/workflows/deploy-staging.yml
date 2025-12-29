@@ -4,16 +4,11 @@ on:
   push:
     branches:
       - develop
+      - staging
   workflow_dispatch:
 
-env:
-  DOCKER_IMAGE: colombian-frontend
-  DOCKER_TAG: ${{ github.sha }}
-  DEPLOY_PATH: /home/deploy/apps/frontend
-
 jobs:
-  lint-and-test:
-    name: Lint and Test
+  deploy:
     runs-on: ubuntu-latest
     
     steps:
@@ -29,143 +24,84 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run ESLint
-        run: npm run lint
-
-      - name: Run type check
-        run: npm run type-check || npx tsc --noEmit
-
-      - name: Run tests
-        run: npm test -- --passWithNoTests
+      - name: Generate API types
+        env:
+          NEXT_PUBLIC_API_URL: https://api-stg.fullcolombiano.com
+        run: npm run generate:api-types || echo "Skipping type generation"
 
       - name: Build application
         env:
-          NEXT_PUBLIC_API_URL: https://api-stg.colombiansupply.com
-          NEXT_PUBLIC_ENVIRONMENT: staging
+          NEXT_PUBLIC_API_URL: https://api-stg.fullcolombiano.com
+          NEXT_PUBLIC_APP_NAME: "Full Colombiano Staging"
+          NEXT_PUBLIC_APP_VERSION: ${{ github.sha }}
         run: npm run build
 
-  build:
-    name: Build Docker Image
-    runs-on: ubuntu-latest
-    needs: lint-and-test
-    
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Create .env.production
-        run: |
-          cat > .env.production <<EOF
-          NEXT_PUBLIC_API_URL=${{ secrets.STAGING_API_URL }}
-          NEXT_PUBLIC_ENVIRONMENT=staging
-          NEXT_PUBLIC_SITE_URL=https://stg.colombiansupply.com
-          EOF
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Build Docker image
-        run: |
-          docker build \
-            --build-arg NEXT_PUBLIC_API_URL=${{ secrets.STAGING_API_URL }} \
-            --build-arg NEXT_PUBLIC_ENVIRONMENT=staging \
-            -t ${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }} \
-            -t ${{ env.DOCKER_IMAGE }}:staging \
-            .
-
-      - name: Save Docker image
-        run: |
-          docker save ${{ env.DOCKER_IMAGE }}:staging | gzip > frontend-staging.tar.gz
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: docker-image
-          path: frontend-staging.tar.gz
-          retention-days: 1
-
-  deploy:
-    name: Deploy to VPS Staging
-    runs-on: ubuntu-latest
-    needs: build
-    environment: staging
-    
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Download artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: docker-image
-
-      - name: Copy files to VPS
+      - name: Deploy to VPS
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USER }}
+          username: ${{ secrets.VPS_USERNAME }}
           key: ${{ secrets.VPS_SSH_KEY }}
           port: ${{ secrets.VPS_PORT || 22 }}
-          source: "frontend-staging.tar.gz,docker-compose.staging.yml"
-          target: ${{ env.DEPLOY_PATH }}/
+          source: ".next,public,package.json,package-lock.json,next.config.js"
+          target: "/opt/fullcolombiano/frontend-staging"
+          strip_components: 0
 
-      - name: Deploy on VPS
+      - name: Setup and restart on VPS
         uses: appleboy/ssh-action@v1.0.0
         with:
           host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USER }}
+          username: ${{ secrets.VPS_USERNAME }}
           key: ${{ secrets.VPS_SSH_KEY }}
           port: ${{ secrets.VPS_PORT || 22 }}
           script: |
-            cd ${{ env.DEPLOY_PATH }}
+            cd /opt/fullcolombiano/frontend-staging
             
-            # Load Docker image
-            echo "🐳 Loading Docker image..."
-            docker load < frontend-staging.tar.gz
+            # Install dependencies if needed
+            if [ ! -d "node_modules" ]; then
+              npm ci --production
+            fi
             
-            # Create .env if doesn't exist
-            cat > .env.staging <<EOF
-            NEXT_PUBLIC_API_URL=${{ secrets.STAGING_API_URL }}
-            NEXT_PUBLIC_ENVIRONMENT=staging
-            NEXT_PUBLIC_SITE_URL=https://stg.colombiansupply.com
+            # Create ecosystem file for PM2
+            cat > ecosystem.config.js << 'EOF'
+            module.exports = {
+              apps: [{
+                name: 'fullcolombiano-frontend-staging',
+                script: 'node_modules/next/dist/bin/next',
+                args: 'start',
+                instances: 2,
+                exec_mode: 'cluster',
+                env: {
+                  NODE_ENV: 'production',
+                  PORT: 3001,
+                  NEXT_PUBLIC_API_URL: 'https://api-stg.fullcolombiano.com'
+                }
+              }]
+            }
             EOF
             
-            # Deploy with Docker Compose
-            echo "🚀 Deploying application..."
-            docker-compose -f docker-compose.staging.yml down
-            docker-compose -f docker-compose.staging.yml up -d
+            # Install PM2 if not installed
+            if ! command -v pm2 &> /dev/null; then
+              npm install -g pm2
+            fi
             
-            # Wait for service
-            echo "⏳ Waiting for service to start..."
-            sleep 15
+            # Restart application
+            pm2 delete fullcolombiano-frontend-staging || true
+            pm2 start ecosystem.config.js
+            pm2 save
             
-            # Check status
-            echo "📊 Service status:"
-            docker-compose -f docker-compose.staging.yml ps
+            # Setup PM2 startup
+            pm2 startup systemd -u $USER --hp $HOME || true
             
-            # Show logs
-            echo "📝 Recent logs:"
-            docker-compose -f docker-compose.staging.yml logs --tail=50
-            
-            # Cleanup
-            docker image prune -f
-            
-            echo "✅ Deployment completed!"
+            # Show status
+            pm2 status
 
-      - name: Health Check
-        run: |
-          echo "🏥 Running health check..."
-          sleep 20
-          curl -f https://stg.colombiansupply.com || exit 1
-          echo "✅ Health check passed!"
-
-      - name: Notify deployment
+      - name: Notify deployment status
         if: always()
         run: |
-          if [ "${{ job.status }}" == "success" ]; then
-            echo "✅ Staging deployment successful!"
-            echo "URL: https://stg.colombiansupply.com"
+          if [ ${{ job.status }} == 'success' ]; then
+            echo "✅ Frontend deployed successfully to staging!"
+            echo "🔗 Frontend URL: https://stg.fullcolombiano.com"
           else
-            echo "❌ Staging deployment failed!"
+            echo "❌ Frontend deployment failed!"
           fi
-

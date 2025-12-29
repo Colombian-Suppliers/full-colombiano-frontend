@@ -32,7 +32,7 @@ import {
 
 export default function RegisterPage() {
   const router = useRouter();
-  const { register: registerUser, isLoading } = useAuth();
+  const { register: registerUser, isLoading, error: authError, clearError } = useAuth();
   const [step, setStep] = useState(1);
 
   // Geographic data
@@ -223,6 +223,9 @@ export default function RegisterPage() {
   };
 
   const onSubmit = async (data: any) => {
+    // Clear any previous auth errors
+    if (clearError) clearError();
+    
     try {
       // Validar aceptación de términos y privacidad antes de enviar
       if (!data.acceptTerms || !data.acceptPrivacy) {
@@ -260,7 +263,17 @@ export default function RegisterPage() {
       console.error('Registration error:', err);
       const errorMessage =
         err instanceof Error ? err.message : TOAST_MESSAGES.REGISTER_ERROR;
-      showErrorToast(errorMessage);
+      
+      // Set form error on password field if it's a password-related error
+      if (errorMessage.toLowerCase().includes('contraseña') || errorMessage.toLowerCase().includes('password')) {
+        setError('password', {
+          type: 'manual',
+          message: errorMessage,
+        });
+      } else {
+        // For other errors, show toast
+        showErrorToast(errorMessage);
+      }
     }
   };
 
