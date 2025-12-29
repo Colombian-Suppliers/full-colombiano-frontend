@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  frontend:
+    image: colombian-frontend:staging
+    container_name: colombian-frontend-staging
+    restart: unless-stopped
+    env_file:
+      - .env.staging
+    ports:
+      - "3001:3000"  # Staging en puerto 3001
+    networks:
+      - colombian-network
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/api/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend-stg.rule=Host(`stg.colombiansupply.com`)"
+      - "traefik.http.routers.frontend-stg.entrypoints=websecure"
+      - "traefik.http.routers.frontend-stg.tls.certresolver=letsencrypt"
+      - "traefik.http.services.frontend-stg.loadbalancer.server.port=3000"
+
+networks:
+  colombian-network:
+    name: colombian-staging-network
+    external: true
+

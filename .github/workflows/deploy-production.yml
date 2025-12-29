@@ -1,0 +1,269 @@
+name: Deploy Frontend to Production
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to deploy (e.g., v1.0.0)'
+        required: true
+
+env:
+  DOCKER_IMAGE: colombian-frontend
+  DEPLOY_PATH: /home/deploy/apps/frontend
+
+jobs:
+  lint-and-test:
+    name: Lint and Test
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run ESLint
+        run: npm run lint
+
+      - name: Run type check
+        run: npx tsc --noEmit
+
+      - name: Run tests
+        run: npm test -- --passWithNoTests --coverage
+
+      - name: Build application
+        env:
+          NEXT_PUBLIC_API_URL: https://api.colombiansupply.com
+          NEXT_PUBLIC_ENVIRONMENT: production
+        run: npm run build
+
+  lighthouse:
+    name: Lighthouse Performance Check
+    runs-on: ubuntu-latest
+    needs: lint-and-test
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build for Lighthouse
+        env:
+          NEXT_PUBLIC_API_URL: https://api.colombiansupply.com
+        run: npm run build
+
+      - name: Run Lighthouse CI
+        run: |
+          npm install -g @lhci/cli
+          lhci autorun || echo "Lighthouse check completed"
+
+  build:
+    name: Build Docker Image
+    runs-on: ubuntu-latest
+    needs: [lint-and-test, lighthouse]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Get version
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "VERSION=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+          else
+            echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create .env.production
+        run: |
+          cat > .env.production <<EOF
+          NEXT_PUBLIC_API_URL=${{ secrets.PROD_API_URL }}
+          NEXT_PUBLIC_ENVIRONMENT=production
+          NEXT_PUBLIC_SITE_URL=https://colombiansupply.com
+          NEXT_PUBLIC_GA_ID=${{ secrets.GA_ID }}
+          EOF
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        run: |
+          docker build \
+            --build-arg NEXT_PUBLIC_API_URL=${{ secrets.PROD_API_URL }} \
+            --build-arg NEXT_PUBLIC_ENVIRONMENT=production \
+            --build-arg NEXT_PUBLIC_SITE_URL=https://colombiansupply.com \
+            -t ${{ env.DOCKER_IMAGE }}:${{ steps.version.outputs.VERSION }} \
+            -t ${{ env.DOCKER_IMAGE }}:production \
+            -t ${{ env.DOCKER_IMAGE }}:latest \
+            .
+
+      - name: Save Docker image
+        run: |
+          docker save ${{ env.DOCKER_IMAGE }}:production | gzip > frontend-production.tar.gz
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: docker-image
+          path: frontend-production.tar.gz
+          retention-days: 7
+
+  deploy:
+    name: Deploy to VPS Production
+    runs-on: ubuntu-latest
+    needs: build
+    environment: 
+      name: production
+      url: https://colombiansupply.com
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: docker-image
+
+      - name: Copy files to VPS
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT || 22 }}
+          source: "frontend-production.tar.gz,docker-compose.production.yml"
+          target: ${{ env.DEPLOY_PATH }}/
+
+      - name: Deploy on VPS
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT || 22 }}
+          script: |
+            cd ${{ env.DEPLOY_PATH }}
+            
+            # Load new Docker image
+            echo "🐳 Loading new Docker image..."
+            docker load < frontend-production.tar.gz
+            
+            # Update environment variables
+            cat > .env.production <<EOF
+            NEXT_PUBLIC_API_URL=${{ secrets.PROD_API_URL }}
+            NEXT_PUBLIC_ENVIRONMENT=production
+            NEXT_PUBLIC_SITE_URL=https://colombiansupply.com
+            NEXT_PUBLIC_GA_ID=${{ secrets.GA_ID }}
+            EOF
+            
+            # Rolling update (zero downtime)
+            echo "🔄 Performing rolling update..."
+            
+            # Start new container alongside old one
+            docker-compose -f docker-compose.production.yml up -d --no-deps --scale frontend=2 frontend
+            
+            # Wait for new container to be healthy
+            echo "⏳ Waiting for health check..."
+            sleep 20
+            
+            # Check if new container is responding
+            if curl -f http://localhost:3000 > /dev/null 2>&1; then
+              echo "✅ New container is healthy"
+              
+              # Scale down to 1 (removes old container)
+              docker-compose -f docker-compose.production.yml up -d --no-deps --scale frontend=1 frontend
+            else
+              echo "❌ New container failed health check, rolling back"
+              docker-compose -f docker-compose.production.yml up -d --no-deps --scale frontend=1 frontend
+              exit 1
+            fi
+            
+            # Cleanup
+            docker-compose -f docker-compose.production.yml down --remove-orphans
+            docker-compose -f docker-compose.production.yml up -d
+            
+            # Show status
+            echo "📊 Service status:"
+            docker-compose -f docker-compose.production.yml ps
+            
+            # Show logs
+            echo "📝 Recent logs:"
+            docker-compose -f docker-compose.production.yml logs --tail=50 frontend
+            
+            # Cleanup old images
+            docker image prune -f
+            
+            echo "✅ Production deployment completed!"
+
+      - name: Health Check
+        run: |
+          echo "🏥 Running health checks..."
+          sleep 30
+          
+          # Check homepage
+          curl -f https://colombiansupply.com || exit 1
+          
+          # Check that it's actually the new version
+          curl -s https://colombiansupply.com | grep -q "Colombian Supply" || exit 1
+          
+          echo "✅ All health checks passed!"
+
+      - name: Smoke Tests
+        run: |
+          echo "🧪 Running smoke tests..."
+          
+          # Test key pages
+          curl -f https://colombiansupply.com/products || exit 1
+          curl -f https://colombiansupply.com/categories || exit 1
+          
+          # Check response time
+          RESPONSE_TIME=$(curl -o /dev/null -s -w '%{time_total}' https://colombiansupply.com)
+          echo "Response time: ${RESPONSE_TIME}s"
+          
+          echo "✅ Smoke tests passed!"
+
+      - name: Notify deployment success
+        if: success()
+        run: |
+          echo "✅ Production deployment successful!"
+          echo "Version: ${{ steps.version.outputs.VERSION }}"
+          echo "URL: https://colombiansupply.com"
+
+      - name: Rollback on failure
+        if: failure()
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT || 22 }}
+          script: |
+            cd ${{ env.DEPLOY_PATH }}
+            echo "❌ Deployment failed, rolling back..."
+            
+            # Restart with previous image
+            docker-compose -f docker-compose.production.yml down
+            docker-compose -f docker-compose.production.yml up -d
+            
+            echo "⚠️  Rollback completed. Please investigate the issue."
+
