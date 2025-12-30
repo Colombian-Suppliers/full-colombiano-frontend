@@ -4,14 +4,13 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "npm run generate:api-types; next build",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
     "type-check": "tsc --noEmit",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css,json}\"",
     "format:check": "prettier --check \"src/**/*.{js,jsx,ts,tsx,css,json}\"",
-    "generate:api-types": "node scripts/generate-api-types.js",
     "test": "vitest",
     "test:watch": "vitest --watch",
     "test:coverage": "vitest --coverage",
@@ -26,6 +25,7 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@colombian-supply/shared-schemas": "^1.0.0",
     "@hookform/resolvers": "^3.9.0",
     "clsx": "^2.1.1",
     "date-fns": "^3.6.0",

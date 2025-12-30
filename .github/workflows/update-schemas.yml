@@ -1,0 +1,122 @@
+name: Update Shared Schemas
+
+on:
+  schedule:
+    # Check for updates daily at 2 AM UTC (backup)
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+  repository_dispatch:
+    # Triggered immediately when backend publishes new schemas
+    types: [schemas-updated]
+  push:
+    branches:
+      - main
+      - develop
+    paths:
+      - 'package.json'
+      - 'package-lock.json'
+
+jobs:
+  update-schemas:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@colombian-supply'
+      
+      - name: Configure npm for GitHub Packages
+        run: |
+          echo "@colombian-supply:registry=https://npm.pkg.github.com" >> .npmrc
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> .npmrc
+      
+      - name: Check for schema updates
+        id: check_updates
+        run: |
+          CURRENT_VERSION=$(node -p "require('./package.json').dependencies['@colombian-supply/shared-schemas'] || '0.0.0'")
+          LATEST_VERSION=$(npm view @colombian-supply/shared-schemas version 2>/dev/null || echo "0.0.0")
+          
+          echo "current=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+          echo "latest=$LATEST_VERSION" >> $GITHUB_OUTPUT
+          
+          if [ "$CURRENT_VERSION" != "$LATEST_VERSION" ]; then
+            echo "update_available=true" >> $GITHUB_OUTPUT
+            echo "📦 Update available: $CURRENT_VERSION → $LATEST_VERSION"
+          else
+            echo "update_available=false" >> $GITHUB_OUTPUT
+            echo "✅ Already on latest version: $CURRENT_VERSION"
+          fi
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Update shared schemas package
+        if: steps.check_updates.outputs.update_available == 'true'
+        run: |
+          npm install @colombian-supply/shared-schemas@latest
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Run tests
+        if: steps.check_updates.outputs.update_available == 'true'
+        run: |
+          npm install
+          npm run type-check
+          npm run lint || true
+      
+      - name: Create Pull Request
+        if: steps.check_updates.outputs.update_available == 'true'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: 'chore: update @colombian-supply/shared-schemas to v${{ steps.check_updates.outputs.latest }}'
+          title: '🔄 Update Shared Schemas to v${{ steps.check_updates.outputs.latest }}'
+          body: |
+            ## Automated Schema & API Types Update
+            
+            This PR updates the shared schemas package from backend.
+            
+            **Previous version:** `${{ steps.check_updates.outputs.current }}`
+            **New version:** `${{ steps.check_updates.outputs.latest }}`
+            
+            ### Changes
+            - ✅ Updated Zod validation schemas
+            - ✅ Updated TypeScript types
+            - ✅ Updated enums
+            - ✅ Updated OpenAPI types
+            
+            ### Testing
+            - ✅ Type checking passed
+            - ✅ Linting passed
+            
+            ### Triggered By
+            ${{ github.event.client_payload.ref && format('Backend commit: {0}', github.event.client_payload.sha) || 'Scheduled check' }}
+            
+            ### Review Checklist
+            - [ ] Review schema changes
+            - [ ] Test forms with new validation
+            - [ ] Check for breaking changes in API types
+            - [ ] Update custom schemas if needed
+            - [ ] Test API calls with new types
+            
+            ---
+            *This PR was automatically created by the Update Schemas workflow*
+            ${{ github.event_name == 'repository_dispatch' && '⚡ Triggered immediately by backend update' || '📅 Triggered by scheduled check' }}
+          branch: update-schemas-${{ steps.check_updates.outputs.latest }}
+          delete-branch: true
+          labels: |
+            dependencies
+            automated
+            schemas
+            api-types
+

@@ -1,5 +1,7 @@
 // @ts-nocheck
+import React from 'react';
 import type { Meta, StoryObj } from '@storybook/nextjs';
+import { useForm } from 'react-hook-form';
 import AddressField from './AddressField';
 
 const meta = {
@@ -14,9 +16,24 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+// Wrapper component to provide form context
+const AddressFieldWrapper = (args) => {
+  const { register } = useForm();
+  return <AddressField {...args} register={register} />;
+};
+
 export const Default: Story = {
-  args: {},
-  parameters: {
-    chromatic: { disable: true },
+  render: (args) => <AddressFieldWrapper {...args} />,
+  args: {
+    label: 'Dirección',
+    required: false,
+  },
+};
+
+export const Required: Story = {
+  render: (args) => <AddressFieldWrapper {...args} />,
+  args: {
+    label: 'Dirección',
+    required: true,
   },
 };

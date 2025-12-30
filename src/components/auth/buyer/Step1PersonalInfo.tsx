@@ -1,8 +1,10 @@
 // @ts-nocheck
-import React from 'react';import { FaUser, FaIdCard } from 'react-icons/fa';
+import React from 'react';
+import { FaUser, FaIdCard } from 'react-icons/fa';
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { DOCUMENT_TYPE_LABELS } from "@/config/constants";
+import { validateDocument, validateFirstName, validateLastName } from "@/utils/validations";
 
 const RegisterStep1BuyerPersonalInfo = ({
   register,
@@ -14,25 +16,7 @@ const RegisterStep1BuyerPersonalInfo = ({
   const documentType = watch('documentType');
 
   const validateDocumentNumber = (value) => {
-    if (!value || !documentType) return true;
-
-    switch (documentType) {
-      case 'Cédula de Ciudadanía (CC)':
-      case 'Cédula de Extranjería (CE)':
-        if (!/^\d{1,10}$/.test(value)) {
-          return 'El número de documento debe contener solo números (máx. 10 dígitos)';
-        }
-        break;
-      case 'Pasaporte':
-        if (!/^[A-Za-z0-9]{6,12}$/.test(value)) {
-          return 'El pasaporte debe tener entre 6 y 12 caracteres alfanuméricos';
-        }
-        break;
-      default:
-        break;
-    }
-
-    return true;
+    return validateDocument(documentType, value);
   };
 
   return (
@@ -45,14 +29,7 @@ const RegisterStep1BuyerPersonalInfo = ({
           error={errors.firstName?.message}
           {...register('firstName', {
             required: 'Los nombres son requeridos',
-            minLength: {
-              value: 2,
-              message: 'Los nombres deben tener al menos 2 caracteres',
-            },
-            pattern: {
-              value: /^[A-Za-zÀ-ÖØ-öø-ÿ\s]+$/u,
-              message: 'Los nombres solo deben contener letras y espacios',
-            },
+            validate: validateFirstName,
           })}
         />
 
@@ -63,14 +40,7 @@ const RegisterStep1BuyerPersonalInfo = ({
           error={errors.lastName?.message}
           {...register('lastName', {
             required: 'Los apellidos son requeridos',
-            minLength: {
-              value: 3,
-              message: 'Los apellidos deben tener al menos 3 caracteres',
-            },
-            pattern: {
-              value: /^[A-Za-zÀ-ÖØ-öø-ÿ\s]+$/u,
-              message: 'Los apellidos solo deben contener letras y espacios',
-            },
+            validate: validateLastName,
           })}
         />
       </div>

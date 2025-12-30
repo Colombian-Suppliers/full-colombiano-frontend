@@ -9,11 +9,6 @@ const meta = {
     layout: 'fullscreen',
     nextjs: {
       appDirectory: true,
-      navigation: {
-        query: {
-          token: 'mock-reset-token-123',
-        },
-      },
     },
   },
   tags: ['autodocs'],
@@ -22,16 +17,39 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const WithValidToken: Story = {};
+export const WithValidToken: Story = {
+  parameters: {
+    nextjs: {
+      appDirectory: true,
+      navigation: {
+        pathname: '/reset-password',
+        query: {
+          token: 'mock-reset-token-abc123xyz',
+        },
+      },
+    },
+  },
+};
 
 export const WithInvalidToken: Story = {
   parameters: {
     nextjs: {
       appDirectory: true,
       navigation: {
-        query: {
-          token: null,
-        },
+        pathname: '/reset-password',
+        query: {},
+      },
+    },
+  },
+};
+
+export const WithExpiredToken: Story = {
+  parameters: {
+    nextjs: {
+      appDirectory: true,
+      navigation: {
+        pathname: '/reset-password',
+        query: {},
       },
     },
   },

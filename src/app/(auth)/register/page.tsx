@@ -13,7 +13,6 @@ import { Card } from '@/components/ui/Card/Card';
 import { AccountTypeSelector } from '@/components/auth/shared';
 import { 
   Step1PersonalInfo as BuyerStep1PersonalInfo,
-  Step2PersonalInfo as BuyerStep2PersonalInfo,
   Step3Credentials as BuyerStep3Credentials 
 } from '@/components/auth/buyer';
 import { 
@@ -197,7 +196,7 @@ export default function RegisterPage() {
   }, [companyDept, setValue]);
 
   const totalSteps = () => {
-    if (role === 'buyer') return 3;
+    if (role === 'buyer') return 3; // Step 1: Account type, Step 2: Personal info, Step 3: Credentials
     if (role === 'seller') return personType === 'juridica' ? 6 : 5;
     return 1;
   };
@@ -218,8 +217,237 @@ export default function RegisterPage() {
   const back = () => setStep((s) => Math.max(1, s - 1));
 
   const _handleNext = async () => {
-    // Simple validation - can be enhanced with zod schemas
+    const values = getValues();
+    let isValid = true;
+
+    // Validate based on current step and role
+    if (role === 'buyer' && step === 2) {
+      // Validate buyer personal info
+      if (!values.firstName || values.firstName.length < 2) {
+        setError('firstName', { 
+          type: 'manual', 
+          message: 'Los nombres deben tener al menos 2 caracteres' 
+        });
+        isValid = false;
+      }
+      if (!values.lastName || values.lastName.length < 3) {
+        setError('lastName', { 
+          type: 'manual', 
+          message: 'Los apellidos deben tener al menos 3 caracteres' 
+        });
+        isValid = false;
+      }
+      if (!values.documentType) {
+        setError('documentType', { 
+          type: 'manual', 
+          message: 'El tipo de documento es requerido' 
+        });
+        isValid = false;
+      }
+      if (!values.documentNumber) {
+        setError('documentNumber', { 
+          type: 'manual', 
+          message: 'El número de documento es requerido' 
+        });
+        isValid = false;
+      }
+    } else if (role === 'seller' && step === 3) {
+      // Validate store info
+      if (!values.storeName || values.storeName.length < 3) {
+        setError('storeName', { 
+          type: 'manual', 
+          message: 'El nombre de la tienda debe tener al menos 3 caracteres' 
+        });
+        isValid = false;
+      }
+      if (!values.storeUrl) {
+        setError('storeUrl', { 
+          type: 'manual', 
+          message: 'La URL de la tienda es requerida' 
+        });
+        isValid = false;
+      }
+      if (!values.storeCategory) {
+        setError('storeCategory', { 
+          type: 'manual', 
+          message: 'La categoría de la tienda es requerida' 
+        });
+        isValid = false;
+      }
+      if (!values.storePhone) {
+        setError('storePhone', { 
+          type: 'manual', 
+          message: 'El teléfono de la tienda es requerido' 
+        });
+        isValid = false;
+      }
+      if (!values.storeDept) {
+        setError('storeDept', { 
+          type: 'manual', 
+          message: 'El departamento es requerido' 
+        });
+        isValid = false;
+      }
+      if (!values.storeCity) {
+        setError('storeCity', { 
+          type: 'manual', 
+          message: 'La ciudad es requerida' 
+        });
+        isValid = false;
+      }
+      if (!values.storeAddress) {
+        setError('storeAddress', { 
+          type: 'manual', 
+          message: 'La dirección es requerida' 
+        });
+        isValid = false;
+      }
+    } else if (role === 'seller' && personType === 'natural' && step === 4) {
+      // Validate natural person info
+      if (!values.idType) {
+        setError('idType', { 
+          type: 'manual', 
+          message: 'El tipo de documento es requerido' 
+        });
+        isValid = false;
+      }
+      if (!values.idNumber) {
+        setError('idNumber', { 
+          type: 'manual', 
+          message: 'El número de documento es requerido' 
+        });
+        isValid = false;
+      }
+      if (!values.personalPhone) {
+        setError('personalPhone', { 
+          type: 'manual', 
+          message: 'El teléfono es requerido' 
+        });
+        isValid = false;
+      }
+      if (!values.personalDept) {
+        setError('personalDept', { 
+          type: 'manual', 
+          message: 'El departamento es requerido' 
+        });
+        isValid = false;
+      }
+      if (!values.personalCity) {
+        setError('personalCity', { 
+          type: 'manual', 
+          message: 'La ciudad es requerida' 
+        });
+        isValid = false;
+      }
+      if (!values.personalAddress) {
+        setError('personalAddress', { 
+          type: 'manual', 
+          message: 'La dirección es requerida' 
+        });
+        isValid = false;
+      }
+    } else if (role === 'seller' && personType === 'juridica' && step === 4) {
+      // Validate company info
+      if (!values.companyName) {
+        setError('companyName', { 
+          type: 'manual', 
+          message: 'El nombre de la empresa es requerido' 
+        });
+        isValid = false;
+      }
+      if (!values.companyNITNumber) {
+        setError('companyNITNumber', { 
+          type: 'manual', 
+          message: 'El NIT es requerido' 
+        });
+        isValid = false;
+      }
+      if (!values.companyPhone) {
+        setError('companyPhone', { 
+          type: 'manual', 
+          message: 'El teléfono es requerido' 
+        });
+        isValid = false;
+      }
+      if (!values.companyDept) {
+        setError('companyDept', { 
+          type: 'manual', 
+          message: 'El departamento es requerido' 
+        });
+        isValid = false;
+      }
+      if (!values.companyCity) {
+        setError('companyCity', { 
+          type: 'manual', 
+          message: 'La ciudad es requerida' 
+        });
+        isValid = false;
+      }
+      if (!values.companyAddress) {
+        setError('companyAddress', { 
+          type: 'manual', 
+          message: 'La dirección es requerida' 
+        });
+        isValid = false;
+      }
+    } else if (role === 'seller' && personType === 'juridica' && step === 5) {
+      // Validate representative info
+      if (!values.repFirstName) {
+        setError('repFirstName', { 
+          type: 'manual', 
+          message: 'Los nombres del representante son requeridos' 
+        });
+        isValid = false;
+      }
+      if (!values.repLastName) {
+        setError('repLastName', { 
+          type: 'manual', 
+          message: 'Los apellidos del representante son requeridos' 
+        });
+        isValid = false;
+      }
+      if (!values.repIdType) {
+        setError('repIdType', { 
+          type: 'manual', 
+          message: 'El tipo de documento del representante es requerido' 
+        });
+        isValid = false;
+      }
+      if (!values.repIdNumber) {
+        setError('repIdNumber', { 
+          type: 'manual', 
+          message: 'El número de documento del representante es requerido' 
+        });
+        isValid = false;
+      }
+      if (!values.repPhone) {
+        setError('repPhone', { 
+          type: 'manual', 
+          message: 'El teléfono del representante es requerido' 
+        });
+        isValid = false;
+      }
+      if (!values.repEmail) {
+        setError('repEmail', { 
+          type: 'manual', 
+          message: 'El correo del representante es requerido' 
+        });
+        isValid = false;
+      }
+      if (values.repEmail !== values.repConfirmEmail) {
+        setError('repConfirmEmail', { 
+          type: 'manual', 
+          message: 'Los correos no coinciden' 
+        });
+        isValid = false;
+      }
+    }
+
+    if (isValid) {
     next();
+    } else {
+      showErrorToast('Por favor completa todos los campos requeridos correctamente');
+    }
   };
 
   const onSubmit = async (data: any) => {
@@ -363,7 +591,7 @@ export default function RegisterPage() {
               />
             )}
 
-            {/* Buyer: Step 3 - Credentials */}
+            {/* Buyer: Step 3 - Credentials (now step 3 in total, but step 2 for buyer) */}
             {step === 3 && role === 'buyer' && (
               <BuyerStep3Credentials
                 register={register}

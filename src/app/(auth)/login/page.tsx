@@ -30,14 +30,17 @@ function LoginPageContent() {
   const searchParams = useSearchParams();
   const { login, isLoading } = useAuth();
   const [isValidating, setIsValidating] = React.useState(false);
+  const [loginError, setLoginError] = React.useState<string | null>(null);
 
-  const { register, handleSubmit, watch } = useFormValidation<LoginFormData>();
+  const { register, handleSubmit, watch, formState: { errors } } = useFormValidation<LoginFormData>();
 
   const watchedEmail = watch('email');
+  const watchedPassword = watch('password');
 
   const isEmailValid =
     watchedEmail ? /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(watchedEmail) : undefined;
   const emailError = watchedEmail && !isEmailValid ? 'Email inválido' : null;
+  const passwordError = watchedPassword && watchedPassword.length < 6 ? 'La contraseña debe tener al menos 6 caracteres' : null;
 
   // Handle verification messages from URL params
   useEffect(() => {
@@ -76,6 +79,7 @@ function LoginPageContent() {
 
   const onSubmit = async (data: LoginFormData) => {
     setIsValidating(true);
+    setLoginError(null); // Clear previous errors
 
     try {
       // Call real API login
@@ -120,7 +124,9 @@ function LoginPageContent() {
         }, 500);
       } else {
         console.log('ERROR: No user in localStorage!');
-        showErrorToast('Error al guardar sesión');
+        const errorMsg = 'Error al guardar sesión';
+        setLoginError(errorMsg);
+        showErrorToast(errorMsg);
         setIsValidating(false);
       }
     } catch (err) {
@@ -128,6 +134,7 @@ function LoginPageContent() {
       console.error('Login error:', err);
       const message =
         err instanceof Error ? err.message : TOAST_MESSAGES.LOGIN_ERROR;
+      setLoginError(message);
       showErrorToast(message);
       setIsValidating(false);
     }
@@ -147,6 +154,13 @@ function LoginPageContent() {
       <div className="px-6 py-4 animate-slide-up">
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            {loginError && (
+              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-sm animate-slide-up">
+                <p className="font-medium">Error de inicio de sesión</p>
+                <p>{loginError}</p>
+              </div>
+            )}
+
             <FormField
               label="Correo electrónico"
               error={emailError || undefined}
@@ -156,16 +170,16 @@ function LoginPageContent() {
                 type="email"
                 placeholder="tucorreo@ejemplo.com"
                 icon={<MdEmail className="w-5 h-5" />}
-                {...register('email')}
+                {...register('email', { required: 'El correo es requerido' })}
                 aria-describedby={emailError ? 'email-error' : undefined}
               />
             </FormField>
 
-            <FormField label="Contraseña">
+            <FormField label="Contraseña" error={passwordError || undefined}>
               <PasswordInput
                 placeholder="Ingresa tu contraseña"
                 icon={<MdLock className="w-5 h-5" />}
-                {...register('password')}
+                {...register('password', { required: 'La contraseña es requerida', minLength: { value: 6, message: 'Mínimo 6 caracteres' } })}
               />
             </FormField>
 

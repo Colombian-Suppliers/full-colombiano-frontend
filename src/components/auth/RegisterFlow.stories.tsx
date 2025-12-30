@@ -6,7 +6,6 @@ import { Card } from '@/components/ui/Card';
 import { AccountTypeSelector } from '@/components/auth/shared';
 import { 
   Step1PersonalInfo as BuyerStep1PersonalInfo,
-  Step2PersonalInfo as BuyerStep2PersonalInfo,
   Step3Credentials as BuyerStep3Credentials,
 } from '@/components/auth/buyer';
 import {
@@ -72,7 +71,7 @@ const RegisterFlowWrapper = () => {
       );
     }
 
-    // Buyer Flow
+    // Buyer Flow (2 steps: Personal Info + Credentials)
     if (formData.role === 'buyer') {
       if (step === 2) {
         return (
@@ -81,28 +80,18 @@ const RegisterFlowWrapper = () => {
             watch={watch}
             errors={errors}
             next={next}
-            prev={prev}
+            back={back}
           />
         );
       }
       if (step === 3) {
-        return (
-          <BuyerStep2PersonalInfo
-            register={register}
-            errors={errors}
-            back={back}
-            handleNext={handleNext}
-          />
-        );
-      }
-      if (step === 4) {
         return (
           <BuyerStep3Credentials
             register={register}
             watch={watch}
             errors={errors}
             isLoading={false}
-            prev={prev}
+            back={back}
           />
         );
       }
@@ -218,7 +207,7 @@ const RegisterFlowWrapper = () => {
           <p className="text-center text-gray-500 text-base mb-4">
             Paso {step} de{' '}
             {formData.role === 'buyer'
-              ? 4
+              ? 3
               : formData.vendorType === 'natural'
               ? 5
               : formData.vendorType === 'juridica'

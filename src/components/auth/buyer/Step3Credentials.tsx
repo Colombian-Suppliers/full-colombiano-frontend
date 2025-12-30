@@ -1,10 +1,11 @@
 // @ts-nocheck
-import React from 'react';import { useState } from 'react';
+import React, { useState } from 'react';
 import { FaEnvelope, FaLock } from 'react-icons/fa';
 import { Input } from "@/components/ui/Input";
 import { PasswordInput } from "@/components/ui/PasswordInput";
 import CheckboxGroup from "@/components/ui/CheckboxGroup";
 import { Button } from "@/components/ui/Button";
+import { validateEmail, validateEmailMatch, validatePassword, validatePasswordMatch } from "@/utils/validations";
 
 const RegisterStep3BuyerCredentials = ({
   register,
@@ -22,6 +23,8 @@ const RegisterStep3BuyerCredentials = ({
   const acceptTerms = watch('acceptTerms');
   const acceptPrivacy = watch('acceptPrivacy');
   const electronicBilling = watch('electronicBilling');
+  const email = watch('email');
+  const password = watch('password');
 
   return (
     <div className="space-y-4 animate-slide-up">
@@ -38,10 +41,7 @@ const RegisterStep3BuyerCredentials = ({
           error={errors.email?.message}
           {...register('email', {
             required: 'El correo es requerido',
-            pattern: {
-              value: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-              message: 'El formato del correo electrónico no es válido',
-            },
+            validate: validateEmail,
           })}
         />
 
@@ -53,12 +53,10 @@ const RegisterStep3BuyerCredentials = ({
           error={errors.confirmEmail?.message}
           {...register('confirmEmail', {
             required: 'Confirma tu correo',
-            pattern: {
-              value: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-              message: 'El formato del correo electrónico no es válido',
+            validate: {
+              validFormat: validateEmail,
+              matches: (val) => validateEmailMatch(email, val),
             },
-            validate: (val) =>
-              val === watch('email') || 'Los correos no coinciden',
           })}
         />
       </div>
@@ -73,7 +71,7 @@ const RegisterStep3BuyerCredentials = ({
           onToggle={togglePasswordVisibility}
           {...register('password', {
             required: 'La contraseña es requerida',
-            minLength: { value: 10, message: 'Mínimo 10 caracteres' },
+            validate: validatePassword,
           })}
         />
 
@@ -86,10 +84,20 @@ const RegisterStep3BuyerCredentials = ({
           onToggle={togglePasswordVisibility}
           {...register('confirmPassword', {
             required: 'Confirma tu contraseña',
-            validate: (val) =>
-              val === watch('password') || 'Las contraseñas no coinciden',
+            validate: (val) => validatePasswordMatch(password, val),
           })}
         />
+      </div>
+
+      {/* Password Requirements Hint */}
+      <div className="bg-blue-50 border border-blue-200 rounded-md p-3 text-sm text-gray-700">
+        <p className="font-semibold text-blue-900 mb-2">Requisitos de la contraseña:</p>
+        <ul className="list-disc list-inside space-y-1 text-blue-800">
+          <li>Mínimo 10 caracteres</li>
+          <li>Al menos una letra mayúscula y una minúscula</li>
+          <li>Al menos un número</li>
+          <li>Al menos un carácter especial (!@#$%^&*)</li>
+        </ul>
       </div>
 
       <CheckboxGroup
