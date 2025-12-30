@@ -11,7 +11,7 @@ on:
       backend_url:
         description: 'Backend URL'
         required: false
-        default: 'https://api-staging.fullcolombiano.com'
+        default: 'https://api-stg.fullcolombiano.com'
   
   # Run on schedule (daily)
   schedule:
@@ -39,7 +39,7 @@ jobs:
       - name: Generate API types
         continue-on-error: true
         env:
-          NEXT_PUBLIC_API_URL: ${{ github.event.inputs.backend_url || 'https://api-staging.fullcolombiano.com' }}
+          NEXT_PUBLIC_API_URL: ${{ github.event.inputs.backend_url || 'https://api-stg.fullcolombiano.com' }}
         run: npm run generate:api-types
       
       - name: Check for changes
