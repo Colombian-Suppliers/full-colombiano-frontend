@@ -1,189 +1,512 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { api } from '@/lib/api-client';
+import Button from '@/components/ui/Button/Button';
+import { StatCard, AlertItem, LoadingSpinner } from '@/components/common';
+import {
+  MdCheckCircle,
+  MdLocalShipping,
+  MdWarning,
+  MdQuestionAnswer,
+  MdUndo,
+  MdSearch,
+  MdFilterList,
+  MdShowChart,
+  MdBarChart,
+  MdNotifications,
+  MdVerified,
+  MdAttachMoney,
+} from 'react-icons/md';
+import { FaBoxOpen, FaBullhorn, FaShoppingBag } from 'react-icons/fa';
+
+interface Stats {
+  totalSales: number;
+  totalProducts: number;
+  pendingOrders: number;
+  totalReviews: number;
+  averageRating: number;
+}
+
+interface Order {
+  id: string;
+  status: string;
+  total: number;
+  createdAt: string;
+}
+
+interface Product {
+  id: string;
+  title: string;
+  stock: number;
+  images: string[];
+}
+
+interface Notification {
+  id: string;
+  type: string;
+  title: string;
+  message: string;
+  createdAt: string;
+  userId: string;
+}
 
 export default function DashboardPage() {
   const router = useRouter();
-  const [user, setUser] = useState<any>(null);
+  const [stats, setStats] = useState<Stats>({
+    totalSales: 0,
+    totalProducts: 0,
+    pendingOrders: 0,
+    totalReviews: 0,
+    averageRating: 0,
+  });
+  const [recentOrders, setRecentOrders] = useState<Order[]>([]);
+  const [lowStockProducts, setLowStockProducts] = useState<Product[]>([]);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [activeTab, setActiveTab] = useState<'resumen' | 'notificaciones'>('resumen');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const loadUser = async () => {
-      try {
-        const token = localStorage.getItem('auth_token');
-        if (!token) {
-          router.push('/login');
-          return;
-        }
+    loadDashboardData();
+  }, []);
 
-        const userData = await api.auth.getCurrentUser();
-        setUser(userData);
-      } catch (error) {
-        console.error('Failed to load user:', error);
-        router.push('/login');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadUser();
-  }, [router]);
-
-  const handleLogout = () => {
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('user');
-    router.push('/login');
+  const loadDashboardData = async () => {
+    try {
+      // TODO: Load from API
+      // Mock data for now
+      setStats({
+        totalSales: 1250000,
+        totalProducts: 45,
+        pendingOrders: 8,
+        totalReviews: 23,
+        averageRating: 4.5,
+      });
+      
+      setRecentOrders([]);
+      setLowStockProducts([]);
+      setNotifications([]);
+    } catch (error) {
+      console.error('Error loading dashboard data:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Cargando...</p>
-        </div>
-      </div>
-    );
+    return <LoadingSpinner centered size="lg" message="Cargando dashboard..." />;
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-          <button
-            onClick={handleLogout}
-            className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
-          >
-            Cerrar Sesión
-          </button>
-        </div>
-      </header>
-
-      {/* Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Welcome Card */}
-        <div className="bg-white rounded-lg shadow p-6 mb-8">
-          <h2 className="text-xl font-semibold mb-4">
-            ¡Bienvenido, {user?.display_name || user?.email}!
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <p className="text-sm text-gray-600">Email</p>
-              <p className="font-medium">{user?.email}</p>
+    <div className="bg-white min-h-full">
+      <div className="max-w-7xl mx-auto p-6 space-y-6">
+        {/* Header */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Escritorio</h1>
+            <p className="text-gray-600 mt-1">
+              Encuentra una vista general del Centro de vendedores
+            </p>
+          </div>
+          <div className="flex gap-3">
+            <div className="flex items-center gap-2 bg-green-100 text-green-800 px-3 py-1.5 rounded-md text-sm font-medium">
+              <MdCheckCircle className="text-green-600" />
+              Tienda verificada
             </div>
-            <div>
-              <p className="text-sm text-gray-600">Rol</p>
-              <p className="font-medium capitalize">{user?.role}</p>
-            </div>
-            <div>
-              <p className="text-sm text-gray-600">Estado</p>
-              <p className="font-medium">
-                {user?.is_active ? (
-                  <span className="text-green-600">Activo</span>
-                ) : (
-                  <span className="text-red-600">Inactivo</span>
-                )}
-              </p>
-            </div>
-            <div>
-              <p className="text-sm text-gray-600">Email Verificado</p>
-              <p className="font-medium">
-                {user?.email_verified ? (
-                  <span className="text-green-600">Sí</span>
-                ) : (
-                  <span className="text-yellow-600">No</span>
-                )}
-              </p>
+            <div className="bg-green-100 text-green-800 px-3 py-1.5 rounded-md text-sm font-medium">
+              Activa
             </div>
           </div>
         </div>
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Productos</p>
-                <p className="text-2xl font-bold text-gray-900">0</p>
-              </div>
-              <div className="bg-blue-100 rounded-full p-3">
-                <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                </svg>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Órdenes</p>
-                <p className="text-2xl font-bold text-gray-900">0</p>
-              </div>
-              <div className="bg-green-100 rounded-full p-3">
-                <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                </svg>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Ventas</p>
-                <p className="text-2xl font-bold text-gray-900">$0</p>
-              </div>
-              <div className="bg-yellow-100 rounded-full p-3">
-                <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Quick Actions */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-lg font-semibold mb-4">Acciones Rápidas</h3>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <button className="p-4 border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all">
-              <svg className="w-8 h-8 text-blue-600 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-              </svg>
-              <p className="text-sm font-medium">Nuevo Producto</p>
+        {/* Tabs */}
+        <div className="border-b border-gray-200">
+          <div className="flex gap-6">
+            <button
+              onClick={() => setActiveTab('resumen')}
+              className={`pb-3 px-1 text-sm font-medium flex items-center gap-2 border-b-2 transition-colors ${
+                activeTab === 'resumen'
+                  ? 'border-green-600 text-green-700'
+                  : 'border-transparent text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              <MdShowChart /> Resumen
             </button>
-
-            <button className="p-4 border-2 border-gray-200 rounded-lg hover:border-green-500 hover:bg-green-50 transition-all">
-              <svg className="w-8 h-8 text-green-600 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-              </svg>
-              <p className="text-sm font-medium">Ver Órdenes</p>
-            </button>
-
-            <button className="p-4 border-2 border-gray-200 rounded-lg hover:border-purple-500 hover:bg-purple-50 transition-all">
-              <svg className="w-8 h-8 text-purple-600 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-              </svg>
-              <p className="text-sm font-medium">Mi Tienda</p>
-            </button>
-
-            <button className="p-4 border-2 border-gray-200 rounded-lg hover:border-yellow-500 hover:bg-yellow-50 transition-all">
-              <svg className="w-8 h-8 text-yellow-600 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
-              <p className="text-sm font-medium">Configuración</p>
+            <button
+              onClick={() => setActiveTab('notificaciones')}
+              className={`pb-3 px-1 text-sm font-medium flex items-center gap-2 border-b-2 transition-colors ${
+                activeTab === 'notificaciones'
+                  ? 'border-green-600 text-green-700'
+                  : 'border-transparent text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              <MdNotifications /> Notificaciones
             </button>
           </div>
         </div>
 
-      </main>
+        {activeTab === 'resumen' && (
+          <div className="space-y-6">
+            {/* Stats Row */}
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+              <StatCard
+                title="Ventas"
+                value={`$${stats.totalSales.toLocaleString()}`}
+                subtitle="Hoy"
+              />
+              <StatCard
+                title="Pedidos"
+                value={stats.pendingOrders}
+                subtitle="Hoy"
+              />
+              <StatCard
+                title="Pedidos por despachar"
+                value={stats.pendingOrders}
+                subtitle="Requieren atención"
+              />
+              <StatCard title="Pedidos en tránsito" value="0" subtitle="" />
+              <StatCard title="Saldo Disponible" value="$0" subtitle="" />
+              <StatCard
+                title="Próxima fecha de retiro"
+                value="25/11"
+                subtitle=""
+              />
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Chart Section */}
+              <div className="lg:col-span-2 bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                <div className="flex justify-between items-center mb-6">
+                  <div className="flex bg-gray-100 rounded-lg p-1">
+                    <button className="px-4 py-1 bg-white rounded shadow-sm text-sm font-medium text-gray-800">
+                      Ventas
+                    </button>
+                    <button className="px-4 py-1 text-sm font-medium text-gray-600 hover:text-gray-800">
+                      Pedidos
+                    </button>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <select className="text-sm border border-gray-300 rounded-md px-2 py-1 bg-white">
+                      <option>Semanal</option>
+                      <option>Mensual</option>
+                      <option>Anual</option>
+                    </select>
+                    <div className="flex gap-1 text-gray-400">
+                      <MdShowChart className="text-gray-600 cursor-pointer" />
+                      <MdBarChart className="cursor-pointer hover:text-gray-600" />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Chart Placeholder */}
+                <div className="h-64 relative border-l border-b border-gray-200 mt-4">
+                  {/* Y-Axis Labels */}
+                  <div className="absolute -left-12 top-0 h-full flex flex-col justify-between text-xs text-gray-400">
+                    <span>$5000</span>
+                    <span>$3750</span>
+                    <span>$2500</span>
+                    <span>$1250</span>
+                  </div>
+                  {/* Grid Lines */}
+                  <div className="w-full h-full flex flex-col justify-between">
+                    <div className="border-t border-dashed border-gray-100 w-full h-0"></div>
+                    <div className="border-t border-dashed border-gray-100 w-full h-0"></div>
+                    <div className="border-t border-dashed border-gray-100 w-full h-0"></div>
+                    <div className="border-t border-dashed border-gray-100 w-full h-0"></div>
+                  </div>
+                  {/* X-Axis Labels */}
+                  <div className="absolute -bottom-6 left-0 w-full flex justify-between text-xs text-gray-400 px-4">
+                    <span>1</span>
+                    <span>8</span>
+                    <span>15</span>
+                    <span>22</span>
+                  </div>
+                  <div className="absolute -bottom-10 w-full text-center text-xs text-gray-400">
+                    Diciembre 2025
+                  </div>
+                  {/* Mock Line */}
+                  <div className="absolute bottom-0 left-0 w-full h-1 bg-green-700 opacity-20 rounded-full"></div>
+                </div>
+              </div>
+
+              {/* Avisos Importantes */}
+              <div className="lg:col-span-1 border border-green-100 rounded-lg overflow-hidden shadow-sm">
+                <div className="bg-green-100 px-4 py-3 flex items-center gap-2">
+                  <MdNotifications className="text-green-800" />
+                  <h3 className="font-semibold text-green-900">
+                    Avisos importantes
+                  </h3>
+                </div>
+                <div className="p-4 space-y-3 bg-green-50 h-full">
+                  <AlertItem
+                    icon={MdVerified}
+                    text="Aún no has realizado la verificación de tu tienda"
+                    colorClass="text-white"
+                    iconBgClass="bg-green-700"
+                  />
+                  <AlertItem
+                    icon={MdLocalShipping}
+                    text="Pedidos pendientes por despachar"
+                    count={stats.pendingOrders || 3}
+                    colorClass="text-white"
+                    iconBgClass="bg-green-700"
+                  />
+                  <AlertItem
+                    icon={MdQuestionAnswer}
+                    text="Preguntas pendientes de responder"
+                    count={2}
+                    colorClass="text-white"
+                    iconBgClass="bg-green-700"
+                  />
+                  <AlertItem
+                    icon={MdWarning}
+                    text="Productos con bajo inventario"
+                    count={lowStockProducts.length || 5}
+                    colorClass="text-white"
+                    iconBgClass="bg-green-700"
+                  />
+                  <AlertItem
+                    icon={MdUndo}
+                    text="Solicitudes de devolución"
+                    count={1}
+                    colorClass="text-white"
+                    iconBgClass="bg-green-700"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Pedidos Recientes */}
+              <div className="border border-green-100 rounded-lg overflow-hidden shadow-sm">
+                <div className="bg-green-100 px-4 py-3">
+                  <h3 className="font-bold text-gray-900">Pedidos recientes</h3>
+                </div>
+                <div className="p-4 bg-white">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left">
+                      <thead>
+                        <tr className="bg-green-50 text-gray-700 text-sm">
+                          <th className="py-2 px-3 rounded-l-md">Pedido</th>
+                          <th className="py-2 px-3">Estado</th>
+                          <th className="py-2 px-3">Monto</th>
+                          <th className="py-2 px-3 rounded-r-md">Fecha</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-100">
+                        {recentOrders.slice(0, 4).map((order) => (
+                          <tr key={order.id} className="text-sm">
+                            <td className="py-3 px-3 font-medium text-gray-600">
+                              #{order.id}
+                            </td>
+                            <td className="py-3 px-3 text-gray-600">
+                              {order.status === 'pending'
+                                ? 'Pago en verificación'
+                                : order.status === 'delivered'
+                                  ? 'Entregado'
+                                  : order.status}
+                            </td>
+                            <td className="py-3 px-3 text-gray-600">
+                              ${order.total.toLocaleString()}
+                            </td>
+                            <td className="py-3 px-3 text-gray-600">
+                              {new Date(order.createdAt).toLocaleDateString()}
+                            </td>
+                          </tr>
+                        ))}
+                        {recentOrders.length === 0 && (
+                          <tr>
+                            <td
+                              colSpan={4}
+                              className="py-4 text-center text-gray-500"
+                            >
+                              No hay pedidos recientes
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                  <div className="mt-4 flex justify-center">
+                    <Button
+                      variant="primary"
+                      className="bg-green-700 hover:bg-green-800 w-full md:w-auto"
+                      onClick={() => router.push('/d/orders')}
+                    >
+                      Ir a pedidos
+                    </Button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Productos con bajo inventario */}
+              <div className="border border-green-100 rounded-lg overflow-hidden shadow-sm">
+                <div className="bg-green-100 px-4 py-3">
+                  <h3 className="font-bold text-gray-900">
+                    Productos con inventario bajo
+                  </h3>
+                </div>
+                <div className="p-4 bg-white">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left">
+                      <thead>
+                        <tr className="bg-green-50 text-gray-700 text-sm">
+                          <th className="py-2 px-3 rounded-l-md">Producto</th>
+                          <th className="py-2 px-3 text-center">Estado</th>
+                          <th className="py-2 px-3 text-center rounded-r-md">
+                            Inventario
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-100">
+                        {lowStockProducts.slice(0, 4).map((product) => (
+                          <tr key={product.id} className="text-sm">
+                            <td className="py-3 px-3">
+                              <div className="flex items-center gap-2">
+                                <div className="w-8 h-8 bg-gray-100 rounded border border-gray-200 flex-shrink-0 overflow-hidden">
+                                  <img
+                                    src={product.images[0] || '/placeholder.png'}
+                                    alt=""
+                                    className="w-full h-full object-cover"
+                                  />
+                                </div>
+                                <span className="text-gray-600 truncate max-w-[150px]">
+                                  {product.title}
+                                </span>
+                              </div>
+                            </td>
+                            <td className="py-3 px-3 text-center">
+                              <span
+                                className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                  product.stock === 0
+                                    ? 'bg-red-100 text-red-800'
+                                    : 'bg-yellow-100 text-yellow-800'
+                                }`}
+                              >
+                                {product.stock === 0
+                                  ? 'Agotado'
+                                  : 'Inventario bajo'}
+                              </span>
+                            </td>
+                            <td className="py-3 px-3 text-center text-gray-600">
+                              {product.stock}
+                            </td>
+                          </tr>
+                        ))}
+                        {lowStockProducts.length === 0 && (
+                          <tr>
+                            <td
+                              colSpan={3}
+                              className="py-4 text-center text-gray-500"
+                            >
+                              No hay productos con bajo inventario
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                  <div className="mt-4 flex justify-center">
+                    <Button
+                      variant="primary"
+                      className="bg-green-700 hover:bg-green-800 w-full md:w-auto"
+                      onClick={() => router.push('/d/products')}
+                    >
+                      Ir a productos
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'notificaciones' && (
+          <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+            {/* Toolbar */}
+            <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
+              <div className="relative w-full md:w-96">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <MdSearch className="text-gray-400 text-xl" />
+                </div>
+                <input
+                  type="text"
+                  placeholder="Buscar..."
+                  className="pl-10 w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                />
+              </div>
+
+              <div className="flex items-center gap-3 w-full md:w-auto">
+                <select className="border border-gray-300 rounded-md py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 bg-white">
+                  <option>Más recientes primero</option>
+                  <option>Más antiguos primero</option>
+                </select>
+
+                <button className="flex items-center gap-2 border border-gray-300 rounded-md py-2 px-4 text-sm font-medium hover:bg-gray-50">
+                  <MdFilterList /> Filtrar
+                </button>
+              </div>
+            </div>
+
+            {/* Notifications Table */}
+            <div className="overflow-x-auto">
+              <table className="w-full text-left">
+                <thead>
+                  <tr className="bg-green-100 text-gray-700 text-sm">
+                    <th className="py-3 px-4 rounded-l-md">Tipo</th>
+                    <th className="py-3 px-4">Mensaje</th>
+                    <th className="py-3 px-4 rounded-r-md text-right">Fecha</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {notifications.map((notification) => (
+                    <tr
+                      key={notification.id}
+                      className="text-sm hover:bg-gray-50"
+                    >
+                      <td className="py-4 px-4">
+                        <div className="flex items-center gap-2 font-medium text-gray-800">
+                          {notification.type === 'order' && (
+                            <FaBoxOpen className="text-orange-500" />
+                          )}
+                          {notification.type === 'payment' && (
+                            <MdAttachMoney className="text-yellow-600 text-lg" />
+                          )}
+                          {notification.type === 'announcement' && (
+                            <FaBullhorn className="text-yellow-500" />
+                          )}
+                          {notification.type === 'product' && (
+                            <FaShoppingBag className="text-blue-500" />
+                          )}
+                          {notification.type === 'verification' && (
+                            <MdVerified className="text-green-500" />
+                          )}
+                          <span>{notification.title}</span>
+                        </div>
+                      </td>
+                      <td className="py-4 px-4 text-gray-600">
+                        {notification.message}
+                      </td>
+                      <td className="py-4 px-4 text-right text-gray-500">
+                        {new Date(notification.createdAt).toLocaleString()}
+                      </td>
+                    </tr>
+                  ))}
+                  {notifications.length === 0 && (
+                    <tr>
+                      <td
+                        colSpan={3}
+                        className="py-8 text-center text-gray-500"
+                      >
+                        No tienes notificaciones
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
-
