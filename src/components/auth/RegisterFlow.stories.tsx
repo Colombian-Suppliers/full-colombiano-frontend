@@ -2,6 +2,7 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { Card } from '@/components/ui/Card';
 import { AccountTypeSelector } from '@/components/auth/shared';
 import { 
@@ -23,40 +24,82 @@ import {
 } from '@/components/auth/seller/juridica';
 
 /**
- * Complete Registration Flow
- * This story demonstrates the entire registration process with all steps
+ * Complete Registration Flow with Real Validation
+ * This story demonstrates the entire registration process with working validation
  */
 const RegisterFlowWrapper = () => {
   const [step, setStep] = useState(1);
-  const [formData, setFormData] = useState({
-    role: '',
-    vendorType: '',
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    documentType: '',
-    documentNumber: '',
-    password: '',
-    confirmPassword: '',
-    storeName: '',
-    storeDescription: '',
-    companyName: '',
-    companyDocumentType: '',
-    companyDocumentNumber: '',
+  
+  const {
+    register,
+    watch,
+    setValue,
+    getValues,
+    formState: { errors },
+    trigger,
+  } = useForm({
+    mode: 'onChange',
+    defaultValues: {
+      role: '',
+      vendorType: '',
+      firstName: '',
+      lastName: '',
+      email: '',
+      emailConfirm: '',
+      phone: '',
+      documentType: 'CC',
+      documentNumber: '',
+      password: '',
+      passwordConfirm: '',
+      terms: false,
+      storeName: '',
+      storeDescription: '',
+      storeDepartment: '',
+      storeCity: '',
+      companyName: '',
+      companyDocumentType: 'NIT',
+      companyDocumentNumber: '',
+      representativeFirstName: '',
+      representativeLastName: '',
+      representativeDocumentType: 'CC',
+      representativeDocumentNumber: '',
+    },
   });
 
-  const register = () => ({});
-  const watch = (field) => formData[field];
-  const setValue = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-  };
-  const getValues = () => formData;
-  const errors = {}; // Empty errors object for Storybook
   const next = () => setStep((prev) => prev + 1);
   const prev = () => setStep((prev) => prev - 1);
-  const handleNext = () => setStep((prev) => prev + 1);
   const back = () => setStep((prev) => prev - 1);
+  
+  // Validation before moving to next step
+  const handleNext = async () => {
+    const role = watch('role');
+    const vendorType = watch('vendorType');
+    
+    let fieldsToValidate: string[] = [];
+    
+    // Determine which fields to validate based on current step
+    if (step === 2 && role === 'buyer') {
+      fieldsToValidate = ['firstName', 'lastName', 'documentType', 'documentNumber'];
+    } else if (step === 3 && role === 'seller') {
+      fieldsToValidate = ['storeName', 'storeDescription', 'storeDepartment', 'storeCity'];
+    } else if (step === 4 && vendorType === 'natural') {
+      fieldsToValidate = ['firstName', 'lastName', 'documentType', 'documentNumber', 'phone'];
+    } else if (step === 4 && vendorType === 'juridica') {
+      fieldsToValidate = ['companyName', 'companyDocumentType', 'companyDocumentNumber'];
+    } else if (step === 5 && vendorType === 'juridica') {
+      fieldsToValidate = ['representativeFirstName', 'representativeLastName', 'representativeDocumentType', 'representativeDocumentNumber'];
+    }
+    
+    // Trigger validation for the fields
+    if (fieldsToValidate.length > 0) {
+      const isValid = await trigger(fieldsToValidate);
+      if (isValid) {
+        next();
+      }
+    } else {
+      next();
+    }
+  };
 
   const renderStep = () => {
     // Step 1: Account Type Selection
@@ -72,14 +115,14 @@ const RegisterFlowWrapper = () => {
     }
 
     // Buyer Flow (2 steps: Personal Info + Credentials)
-    if (formData.role === 'buyer') {
+    if (watch('role') === 'buyer') {
       if (step === 2) {
         return (
           <BuyerStep1PersonalInfo
             register={register}
             watch={watch}
             errors={errors}
-            next={next}
+            next={handleNext}
             back={back}
           />
         );
@@ -98,7 +141,7 @@ const RegisterFlowWrapper = () => {
     }
 
     // Seller Flow
-    if (formData.role === 'seller') {
+    if (watch('role') === 'seller') {
       if (step === 2) {
         return (
           <SellerStep1PersonType
@@ -120,22 +163,22 @@ const RegisterFlowWrapper = () => {
             departments={['Antioquia', 'Bogotá D.C.', 'Valle del Cauca', 'Atlántico', 'Cundinamarca']}
             storeCities={['Medellín', 'Envigado', 'Bello', 'Itagüí', 'Sabaneta']}
             loadingGeo={false}
-            storeDept={formData.storeDept || ''}
+            storeDept={watch('storeDepartment') || ''}
             back={back}
-            next={next}
+            next={handleNext}
           />
         );
       }
 
       // Natural Person Flow
-      if (formData.vendorType === 'natural') {
+      if (watch('vendorType') === 'natural') {
         if (step === 4) {
           return (
             <NaturalStep2PersonalInfo
               register={register}
               watch={watch}
               errors={errors}
-              next={next}
+              next={handleNext}
               prev={prev}
             />
           );
@@ -154,14 +197,14 @@ const RegisterFlowWrapper = () => {
       }
 
       // Juridica Person Flow
-      if (formData.vendorType === 'juridica') {
+      if (watch('vendorType') === 'juridica') {
         if (step === 4) {
           return (
             <JuridicaStep2CompanyInfo
               register={register}
               watch={watch}
               errors={errors}
-              next={next}
+              next={handleNext}
               prev={prev}
             />
           );
@@ -172,7 +215,7 @@ const RegisterFlowWrapper = () => {
               register={register}
               watch={watch}
               errors={errors}
-              next={next}
+              next={handleNext}
               prev={prev}
             />
           );
@@ -200,17 +243,17 @@ const RegisterFlowWrapper = () => {
         <div className="animate-slide-up pb-6">
           <h1 className="text-3xl font-bold text-center text-primary-600 mb-3">
             {step === 1 && 'Crear cuenta'}
-            {step === 2 && formData.role === 'seller' && 'Crear cuenta de vendedor'}
-            {step >= 2 && formData.role === 'buyer' && 'Crear cuenta'}
-            {step >= 3 && formData.role === 'seller' && 'Crear cuenta de vendedor'}
+            {step === 2 && watch('role') === 'seller' && 'Crear cuenta de vendedor'}
+            {step >= 2 && watch('role') === 'buyer' && 'Crear cuenta'}
+            {step >= 3 && watch('role') === 'seller' && 'Crear cuenta de vendedor'}
           </h1>
           <p className="text-center text-gray-500 text-base mb-4">
             Paso {step} de{' '}
-            {formData.role === 'buyer'
+            {watch('role') === 'buyer'
               ? 3
-              : formData.vendorType === 'natural'
+              : watch('vendorType') === 'natural'
               ? 5
-              : formData.vendorType === 'juridica'
+              : watch('vendorType') === 'juridica'
               ? 6
               : '?'}
           </p>
