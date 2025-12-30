@@ -1,5 +1,5 @@
 // @ts-nocheck
-import type { Meta, StoryObj } from '@storybook/nextjs';
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import Step1PersonalInfo from './Step1PersonalInfo';
 
 const meta = {

@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { useState } from 'react';
 import SearchBar from './SearchBar';
 
@@ -20,7 +20,7 @@ export const Default: Story = {
     return (
       <div style={{ width: '400px' }}>
         <SearchBar value={value} onChange={setValue} />
-        <p className="text-sm text-gray-600 mt-2">Valor: "{value}"</p>
+        <p className="text-sm text-gray-600 mt-2">Valor: &quot;{value}&quot;</p>
       </div>
     );
   },

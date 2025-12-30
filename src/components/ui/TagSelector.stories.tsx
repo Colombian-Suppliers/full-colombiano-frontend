@@ -1,6 +1,6 @@
 // @ts-nocheck
 import React, { useState } from 'react';
-import type { Meta, StoryObj } from '@storybook/nextjs';
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import TagSelector from './TagSelector';
 
 const meta = {

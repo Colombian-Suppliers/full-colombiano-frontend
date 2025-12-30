@@ -1,6 +1,6 @@
 // @ts-nocheck
 import React from 'react';
-import type { Meta, StoryObj } from '@storybook/nextjs';
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { useForm } from 'react-hook-form';
 import AddressField from './AddressField';
 
