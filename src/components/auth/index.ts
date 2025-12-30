@@ -16,6 +16,18 @@ export * from './shared';
 // Buyer registration flow
 export * from './buyer';
 
-// Seller registration flow
-export * from './seller';
+// Seller registration flow - explicitly export to avoid conflicts
+export { 
+  Step1PersonType,
+  Step2StoreInfo
+} from './seller';
+
+// Seller natural flow - rename conflicting exports
+export {
+  Step2PersonalInfo as SellerNaturalStep2PersonalInfo,
+  Step3Credentials as SellerNaturalStep3Credentials
+} from './seller/natural';
+
+// Seller juridica flow
+export * from './seller/juridica';
 

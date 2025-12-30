@@ -127,7 +127,7 @@ const useCategorySelector = ({ categories, value, onChange }: UseCategorySelecto
 
         if (isFromRootPanel) {
           setBreadcrumb([category]);
-          setCurrentLevel(category.children);
+          setCurrentLevel(category.children || []);
         } else {
           const categoryBelongsToCurrentTree = breadcrumb.some((crumb) => {
             return crumb.children?.some((child) => child.id === category.id);
@@ -141,12 +141,12 @@ const useCategorySelector = ({ categories, value, onChange }: UseCategorySelecto
             if (parentIndex !== -1) {
               const newBreadcrumb = breadcrumb.slice(0, parentIndex + 1);
               setBreadcrumb([...newBreadcrumb, category]);
-              setCurrentLevel(category.children);
+              setCurrentLevel(category.children || []);
             }
           } else {
             const fullPath = getBreadcrumbForCategory(category);
             setBreadcrumb(fullPath);
-            setCurrentLevel(category.children);
+            setCurrentLevel(category.children || []);
           }
         }
         setIsTransitioning(false);

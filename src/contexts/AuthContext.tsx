@@ -59,9 +59,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Save token
       localStorage.setItem('auth_token', response.token);
       
-      // Set user
-      if (response.user) {
-        setUser(response.user);
+      // Set user - type assertion needed due to OpenAPI schema type mismatch
+      if (response.user && typeof response.user === 'object' && 'id' in response.user) {
+        setUser(response.user as unknown as UserResponse);
         localStorage.setItem('user', JSON.stringify(response.user));
       }
     } catch (error) {
@@ -74,16 +74,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const response = await api.auth.register(userData);
       
-      // Save token if provided
-      if (response.token) {
-        localStorage.setItem('auth_token', response.token);
-      }
-      
-      // Set user
-      if (response.user) {
-        setUser(response.user);
-        localStorage.setItem('user', JSON.stringify(response.user));
-      }
+      // RegisterResponse doesn't include token or user
+      // User needs to verify email before logging in
+      // Just return success - no need to set token or user
     } catch (error) {
       console.error('Registration failed:', error);
       throw error;

@@ -18,7 +18,7 @@ export default function ResendVerificationPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const isEmailValid = email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const isEmailValid = email ? /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) : undefined;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -88,7 +88,7 @@ export default function ResendVerificationPage() {
           <FormField
             label="Correo electrónico"
             error={error}
-            isValid={isEmailValid && !error}
+             isValid={isEmailValid ? !error : undefined}
           >
             <Input
               type="email"

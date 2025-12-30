@@ -36,7 +36,7 @@ export default function LoginPage() {
   const watchedEmail = watch('email');
 
   const isEmailValid =
-    watchedEmail && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(watchedEmail);
+    watchedEmail ? /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(watchedEmail) : undefined;
   const emailError = watchedEmail && !isEmailValid ? 'Email inválido' : null;
 
   // Handle verification messages from URL params
