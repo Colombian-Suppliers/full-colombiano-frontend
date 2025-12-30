@@ -34,13 +34,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          registry-url: 'https://npm.pkg.github.com'
-          scope: '@colombian-suppliers'
-      
-      - name: Configure npm for GitHub Packages
-        run: |
-          echo "@colombian-suppliers:registry=https://npm.pkg.github.com" >> .npmrc
-          echo "//npm.pkg.github.com/:_authToken=${{ secrets.GH_PACKAGES_TOKEN }}" >> .npmrc
       
       - name: Check for schema updates
         id: check_updates
