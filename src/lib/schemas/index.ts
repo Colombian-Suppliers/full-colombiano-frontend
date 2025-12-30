@@ -6,7 +6,8 @@
  */
 
 // Export all generated schemas from the shared package
-export * from '@colombian-suppliers/shared-schemas';
+// TODO: Uncomment when package is installed
+// export * from '@colombian-suppliers/shared-schemas';
 
 // Export custom enhanced schemas
 export * from './custom/auth.schemas';

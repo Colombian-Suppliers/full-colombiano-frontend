@@ -8,13 +8,14 @@
  */
 
 import { z } from 'zod';
-import { 
-  UserRegisterSchema,
-  AddressSchemaSchema as GeneratedAddressSchema,
-  DocumentType,
-  UserRole,
-  VendorType
-} from '@colombian-suppliers/shared-schemas';
+// TODO: Uncomment when package is installed
+// import { 
+//   UserRegisterSchema,
+//   AddressSchemaSchema as GeneratedAddressSchema,
+//   DocumentType,
+//   UserRole,
+//   VendorType
+// } from '@colombian-suppliers/shared-schemas';
 import {
   validateDocument,
   validateEmail,
@@ -305,9 +306,10 @@ export type ResendVerification = z.infer<typeof ResendVerificationSchema>;
 // EXPORTS
 // ============================================
 
-export {
-  DocumentType,
-  UserRole,
-  VendorType,
-} from '@colombian-suppliers/shared-schemas';
+// TODO: Uncomment when package is installed
+// export {
+//   DocumentType,
+//   UserRole,
+//   VendorType,
+// } from '@colombian-suppliers/shared-schemas';
 
