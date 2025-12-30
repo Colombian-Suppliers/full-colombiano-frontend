@@ -9,7 +9,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository_owner }}/full-colombiano-frontend
+  IMAGE_NAME: colombian-suppliers/full-colombiano-frontend
 
 jobs:
   test:
@@ -116,6 +116,14 @@ jobs:
       - name: Create namespace if not exists
         run: |
           kubectl create namespace stg-apps --dry-run=client -o yaml | kubectl apply -f -
+
+      - name: Create or update GHCR secret for image pull
+        run: |
+          kubectl create secret docker-registry ghcr-secret \
+            --docker-server=ghcr.io \
+            --docker-username=${{ github.actor }} \
+            --docker-password=${{ secrets.GITHUB_TOKEN }} \
+            -n stg-apps --dry-run=client -o yaml | kubectl apply -f -
 
       - name: Create or update ConfigMap
         run: |
