@@ -69,6 +69,21 @@ const RegisterFlowWrapper = () => {
     },
   });
 
+  // Mock departments and cities data
+  const departments = ['Antioquia', 'Bogotá D.C.', 'Valle del Cauca', 'Atlántico', 'Cundinamarca'];
+  
+  const citiesByDepartment: Record<string, string[]> = {
+    'Antioquia': ['Medellín', 'Envigado', 'Bello', 'Itagüí', 'Sabaneta', 'La Estrella'],
+    'Bogotá D.C.': ['Bogotá'],
+    'Valle del Cauca': ['Cali', 'Palmira', 'Buenaventura', 'Tuluá', 'Cartago'],
+    'Atlántico': ['Barranquilla', 'Soledad', 'Malambo', 'Sabanalarga'],
+    'Cundinamarca': ['Soacha', 'Facatativá', 'Chía', 'Zipaquirá', 'Fusagasugá'],
+  };
+  
+  // Get cities for selected department
+  const selectedDept = watch('storeDept');
+  const storeCities = selectedDept ? citiesByDepartment[selectedDept] || [] : [];
+
   const next = () => setStep((prev) => prev + 1);
   const prev = () => setStep((prev) => prev - 1);
   const back = () => setStep((prev) => prev - 1);
@@ -163,10 +178,10 @@ const RegisterFlowWrapper = () => {
             watch={watch}
             errors={errors}
             setValue={setValue}
-            departments={['Antioquia', 'Bogotá D.C.', 'Valle del Cauca', 'Atlántico', 'Cundinamarca']}
-            storeCities={['Medellín', 'Envigado', 'Bello', 'Itagüí', 'Sabaneta']}
+            departments={departments}
+            storeCities={storeCities}
             loadingGeo={false}
-            storeDept={watch('storeDept') || ''}
+            storeDept={selectedDept || ''}
             back={back}
             next={handleNext}
           />
