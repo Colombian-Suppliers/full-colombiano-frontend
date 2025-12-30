@@ -22,6 +22,7 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+      packages: read
     
     steps:
       - name: Checkout code
@@ -75,6 +76,7 @@ jobs:
           npm run lint || true
       
       - name: Create Pull Request
+        id: create_pr
         if: steps.check_updates.outputs.update_available == 'true'
         uses: peter-evans/create-pull-request@v6
         with:
@@ -119,4 +121,38 @@ jobs:
             automated
             schemas
             api-types
+      
+      - name: Summary
+        if: always()
+        run: |
+          echo "## 📦 Update Schemas Workflow Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "${{ steps.check_updates.outputs.update_available }}" = "true" ]; then
+            echo "### ✅ Schema Update Available" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "- **Current version:** \`${{ steps.check_updates.outputs.current }}\`" >> $GITHUB_STEP_SUMMARY
+            echo "- **New version:** \`${{ steps.check_updates.outputs.latest }}\`" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            
+            if [ "${{ steps.create_pr.outputs.pull-request-number }}" != "" ]; then
+              echo "### 🎉 Pull Request Created" >> $GITHUB_STEP_SUMMARY
+              echo "" >> $GITHUB_STEP_SUMMARY
+              echo "PR #${{ steps.create_pr.outputs.pull-request-number }}: ${{ steps.create_pr.outputs.pull-request-url }}" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "### ⚠️ Manual PR Creation Required" >> $GITHUB_STEP_SUMMARY
+              echo "" >> $GITHUB_STEP_SUMMARY
+              echo "Branch \`update-schemas-${{ steps.check_updates.outputs.latest }}\` was created successfully." >> $GITHUB_STEP_SUMMARY
+              echo "" >> $GITHUB_STEP_SUMMARY
+              echo "Create PR manually: https://github.com/${{ github.repository }}/compare/develop...update-schemas-${{ steps.check_updates.outputs.latest }}" >> $GITHUB_STEP_SUMMARY
+            fi
+          else
+            echo "### ✅ Already Up to Date" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "Current version: \`${{ steps.check_updates.outputs.current }}\`" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "---" >> $GITHUB_STEP_SUMMARY
+          echo "*Workflow completed successfully* ✅" >> $GITHUB_STEP_SUMMARY
 
