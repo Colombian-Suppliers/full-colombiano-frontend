@@ -39,9 +39,6 @@ const config: StorybookConfig = {
         global: 'globalThis',
       },
       assetsInclude: ['**/*.webp', '**/*.png', '**/*.jpg', '**/*.jpeg', '**/*.svg'],
-      esbuild: {
-        jsx: 'automatic',
-      },
     });
   }
 };
