@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import ProductStockIndicator from './ProductStockIndicator';
 
-const meta: Meta<typeof ProductStock Indicator> = {
+const meta: Meta<typeof ProductStockIndicator> = {
   title: 'Products/ProductStockIndicator',
   component: ProductStockIndicator,
   parameters: {
