@@ -1,11 +1,14 @@
 name: Deploy Storybook
 
+# DISABLED: This workflow is disabled. Storybook deployment needs to be migrated to Kubernetes.
+# To enable, remove the 'workflow_dispatch' only condition and uncomment the push triggers.
+
 on:
-  push:
-    branches:
-      - main
-      - develop
   workflow_dispatch:
+    # push:
+    #   branches:
+    #     - main
+    #     - develop
     inputs:
       environment:
         description: 'Environment to deploy to'
