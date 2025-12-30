@@ -34,18 +34,18 @@ jobs:
         with:
           node-version: '20'
           registry-url: 'https://npm.pkg.github.com'
-          scope: '@colombian-supply'
+          scope: '@colombian-suppliers'
       
       - name: Configure npm for GitHub Packages
         run: |
-          echo "@colombian-supply:registry=https://npm.pkg.github.com" >> .npmrc
+          echo "@colombian-suppliers:registry=https://npm.pkg.github.com" >> .npmrc
           echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> .npmrc
       
       - name: Check for schema updates
         id: check_updates
         run: |
-          CURRENT_VERSION=$(node -p "require('./package.json').dependencies['@colombian-supply/shared-schemas'] || '0.0.0'")
-          LATEST_VERSION=$(npm view @colombian-supply/shared-schemas version 2>/dev/null || echo "0.0.0")
+          CURRENT_VERSION=$(node -p "require('./package.json').dependencies['@colombian-suppliers/shared-schemas'] || '0.0.0'")
+          LATEST_VERSION=$(npm view @colombian-suppliers/shared-schemas version 2>/dev/null || echo "0.0.0")
           
           echo "current=$CURRENT_VERSION" >> $GITHUB_OUTPUT
           echo "latest=$LATEST_VERSION" >> $GITHUB_OUTPUT
@@ -63,7 +63,7 @@ jobs:
       - name: Update shared schemas package
         if: steps.check_updates.outputs.update_available == 'true'
         run: |
-          npm install @colombian-supply/shared-schemas@latest
+          npm install @colombian-suppliers/shared-schemas@latest
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
@@ -79,7 +79,7 @@ jobs:
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: 'chore: update @colombian-supply/shared-schemas to v${{ steps.check_updates.outputs.latest }}'
+          commit-message: 'chore: update @colombian-suppliers/shared-schemas to v${{ steps.check_updates.outputs.latest }}'
           title: '🔄 Update Shared Schemas to v${{ steps.check_updates.outputs.latest }}'
           body: |
             ## Automated Schema & API Types Update
