@@ -1,3 +1,4 @@
+import React from 'react';
 import { MdCheckCircle, MdRadioButtonUnchecked } from 'react-icons/md';
 
 export interface TimelineStep {

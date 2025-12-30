@@ -162,7 +162,7 @@ export const validateEmail = (email: string): boolean | string => {
   
   // Check for common typos
   const domain = email.split('@')[1];
-  const commonTypos = {
+  const commonTypos: Record<string, string> = {
     'gmial.com': 'gmail.com',
     'gmai.com': 'gmail.com',
     'gmil.com': 'gmail.com',
@@ -173,8 +173,9 @@ export const validateEmail = (email: string): boolean | string => {
     'yaho.com': 'yahoo.com',
   };
   
-  if (domain && commonTypos[domain.toLowerCase()]) {
-    return `¿Quisiste decir ${email.split('@')[0]}@${commonTypos[domain.toLowerCase()]}?`;
+  const lowerDomain = domain?.toLowerCase();
+  if (lowerDomain && commonTypos[lowerDomain]) {
+    return `¿Quisiste decir ${email.split('@')[0]}@${commonTypos[lowerDomain]}?`;
   }
   
   return true;
