@@ -279,7 +279,7 @@ export const useAuth = () => {
         setIsLoading(false);
       }
     },
-    [storeLogin]
+    []
   );
 
   const logout = useCallback(async () => {

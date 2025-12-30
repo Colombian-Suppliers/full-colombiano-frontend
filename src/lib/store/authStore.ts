@@ -96,7 +96,7 @@ export const useAuthStore = create<AuthStore>()(
           // For now, we'll just simulate success
           if (Math.random() > 0.9) throw new Error('Token refresh failed');
           return true;
-        } catch (error) {
+        } catch (_error) {
           return false;
         }
       },

@@ -82,7 +82,7 @@ httpClient.interceptors.response.use(
       if (!html) return '';
       try {
         return html.replace(/<[^>]*>/g, '');
-      } catch (e) {
+      } catch (_e) {
         return String(html);
       }
     };
