@@ -159,7 +159,7 @@ export default function ForgotPasswordPage() {
 
                 <Button
                   onClick={() => router.push(ROUTES.LOGIN)}
-                  variant="link"
+                  variant="ghost"
                   className="w-full"
                 >
                   ← Volver al inicio de sesión
