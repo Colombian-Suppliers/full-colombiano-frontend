@@ -25,6 +25,7 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@colombian-suppliers/shared-schemas": "^1.0.1",
     "@hookform/resolvers": "^3.9.0",
     "clsx": "^2.1.1",
     "date-fns": "^3.6.0",
