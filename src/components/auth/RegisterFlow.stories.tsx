@@ -53,9 +53,12 @@ const RegisterFlowWrapper = () => {
       passwordConfirm: '',
       terms: false,
       storeName: '',
-      storeDescription: '',
-      storeDepartment: '',
+      storePhone: '',
+      storeCategory: '',
+      storeDept: '',
       storeCity: '',
+      storeAddress: '',
+      storeAddressLine2: '',
       companyName: '',
       companyDocumentType: 'NIT',
       companyDocumentNumber: '',
@@ -81,7 +84,7 @@ const RegisterFlowWrapper = () => {
     if (step === 2 && role === 'buyer') {
       fieldsToValidate = ['firstName', 'lastName', 'documentType', 'documentNumber'];
     } else if (step === 3 && role === 'seller') {
-      fieldsToValidate = ['storeName', 'storeDescription', 'storeDepartment', 'storeCity'];
+      fieldsToValidate = ['storeName', 'storePhone', 'storeCategory', 'storeDept', 'storeCity', 'storeAddress'];
     } else if (step === 4 && vendorType === 'natural') {
       fieldsToValidate = ['firstName', 'lastName', 'documentType', 'documentNumber', 'phone'];
     } else if (step === 4 && vendorType === 'juridica') {
@@ -163,7 +166,7 @@ const RegisterFlowWrapper = () => {
             departments={['Antioquia', 'Bogotá D.C.', 'Valle del Cauca', 'Atlántico', 'Cundinamarca']}
             storeCities={['Medellín', 'Envigado', 'Bello', 'Itagüí', 'Sabaneta']}
             loadingGeo={false}
-            storeDept={watch('storeDepartment') || ''}
+            storeDept={watch('storeDept') || ''}
             back={back}
             next={handleNext}
           />
