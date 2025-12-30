@@ -54,7 +54,7 @@ export const sanitizeHtml = (html: string): string => {
   if (!html) return '';
 
   // Basic sanitization - remove script tags and event handlers
-  let sanitized = html
+  const sanitized = html
     .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
     .replace(/on\w+\s*=\s*"[^"]*"/gi, '')
     .replace(/on\w+\s*=\s*'[^']*'/gi, '')
