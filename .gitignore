@@ -49,3 +49,7 @@ storybook-static
 # vitest
 .vitest
 
+# chromatic
+build-storybook.log
+chromatic-build-*.log
+

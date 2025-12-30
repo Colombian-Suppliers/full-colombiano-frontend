@@ -88,6 +88,17 @@ npm run storybook
 
 Storybook will be available at `http://localhost:6006`
 
+### Visual Testing with Chromatic
+
+The project uses Chromatic for automated visual regression testing:
+
+```bash
+# Run Chromatic locally
+npm run chromatic
+```
+
+Chromatic automatically runs on every push to `main` or `develop` branches and on pull requests. See [CHROMATIC_SETUP.md](./CHROMATIC_SETUP.md) for complete setup instructions.
+
 ### Available Components
 
 - **Button**: Primary UI component with multiple variants
@@ -145,6 +156,7 @@ npm run storybook        # Start Storybook
 npm run build            # Build for production
 npm run start            # Start production server
 npm run build-storybook  # Build Storybook
+npm run chromatic        # Run Chromatic visual tests
 
 # Code Quality
 npm run lint             # Run ESLint
@@ -315,6 +327,7 @@ docker build -t colombian-frontend:latest .
 
 - [Migration Guide](./MIGRATION_GUIDE.md): Guide for migrating from Vite to Next.js
 - [CI/CD Documentation](./CI_CD_README.md): Continuous Integration and Deployment setup
+- [Chromatic Setup](./CHROMATIC_SETUP.md): Visual regression testing setup guide
 - [Storybook](http://localhost:6006): Component documentation (run `npm run storybook`)
 
 ## 🤝 Contributing

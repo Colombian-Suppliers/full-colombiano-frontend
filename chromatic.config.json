@@ -1,0 +1,10 @@
+{
+  "projectId": "PROJECT_ID_PLACEHOLDER",
+  "buildScriptName": "build-storybook",
+  "exitZeroOnChanges": true,
+  "exitOnceUploaded": true,
+  "onlyChanged": true,
+  "autoAcceptChanges": "main",
+  "ignoreLastBuildOnBranch": "develop"
+}
+

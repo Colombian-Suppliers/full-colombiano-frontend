@@ -323,5 +323,3 @@ export const KPICard = ({
 };
 
 export { COLORS };
-
-export default ChartComponents;
