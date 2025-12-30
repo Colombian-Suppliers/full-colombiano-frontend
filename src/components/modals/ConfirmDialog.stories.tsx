@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
+import React from 'react';
 import { useState } from 'react';
 import ConfirmDialog from './ConfirmDialog';
 import Button from '@/components/ui/Button/Button';

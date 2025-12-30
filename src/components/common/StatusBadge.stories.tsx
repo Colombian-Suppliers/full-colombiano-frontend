@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
+import React from 'react';
 import StatusBadge from './StatusBadge';
 
 const meta: Meta<typeof StatusBadge> = {
