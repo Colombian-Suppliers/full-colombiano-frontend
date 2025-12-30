@@ -1,3 +1,4 @@
+import React from 'react';
 interface AlertItemProps {
   icon: React.ComponentType<{ className?: string }>;
   text: string;

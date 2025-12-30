@@ -1,3 +1,4 @@
+import React from 'react';
 import { useState, useRef, ChangeEvent } from 'react';
 import { MdCloudUpload, MdClose, MdInsertDriveFile } from 'react-icons/md';
 
