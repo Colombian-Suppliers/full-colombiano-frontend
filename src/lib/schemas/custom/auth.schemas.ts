@@ -10,11 +10,11 @@
 import { z } from 'zod';
 import { 
   UserRegisterSchema,
-  AddressSchema as GeneratedAddressSchema,
+  AddressSchemaSchema as GeneratedAddressSchema,
   DocumentType,
   UserRole,
   VendorType
-} from '../generated';
+} from '@colombian-suppliers/shared-schemas';
 import {
   validateDocument,
   validateEmail,
@@ -309,5 +309,5 @@ export {
   DocumentType,
   UserRole,
   VendorType,
-} from '../generated';
+} from '@colombian-suppliers/shared-schemas';
 

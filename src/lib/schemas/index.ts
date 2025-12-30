@@ -5,8 +5,8 @@
  * Includes both auto-generated backend schemas and custom enhanced schemas.
  */
 
-// Export all generated schemas
-export * from './generated';
+// Export all generated schemas from the shared package
+export * from '@colombian-suppliers/shared-schemas';
 
 // Export custom enhanced schemas
 export * from './custom/auth.schemas';
