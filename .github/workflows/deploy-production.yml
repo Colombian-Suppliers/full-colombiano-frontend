@@ -130,6 +130,7 @@ jobs:
           build-args: |
             NEXT_PUBLIC_API_URL=https://api.fullcolombiano.com
             NEXT_PUBLIC_ENVIRONMENT=production
+            SKIP_API_TYPES_GENERATION=true
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
