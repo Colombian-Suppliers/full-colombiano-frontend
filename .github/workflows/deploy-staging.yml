@@ -155,20 +155,22 @@ jobs:
                     limits:
                       memory: "512Mi"
                       cpu: "500m"
-                  livenessProbe:
-                    httpGet:
-                      path: /
-                      port: 3000
-                    initialDelaySeconds: 30
-                    periodSeconds: 10
-                    timeoutSeconds: 5
                   readinessProbe:
                     httpGet:
                       path: /
                       port: 3000
-                    initialDelaySeconds: 10
-                    periodSeconds: 5
-                    timeoutSeconds: 3
+                    initialDelaySeconds: 60
+                    periodSeconds: 10
+                    timeoutSeconds: 5
+                    failureThreshold: 6
+                  livenessProbe:
+                    httpGet:
+                      path: /
+                      port: 3000
+                    initialDelaySeconds: 90
+                    periodSeconds: 10
+                    timeoutSeconds: 5
+                    failureThreshold: 3
           EOF
 
       - name: Create or update Service
@@ -219,9 +221,33 @@ jobs:
                         number: 80
           EOF
 
+      - name: Check pod status before rollout wait
+        run: |
+          echo "📊 Checking pod status..."
+          kubectl get pods -n stg-apps -l app=frontend
+          echo ""
+          echo "📝 Pod events:"
+          kubectl get events -n stg-apps --sort-by='.lastTimestamp' | grep frontend | tail -10 || true
+          echo ""
+          echo "🔍 Waiting 30 seconds for pods to initialize..."
+          sleep 30
+
+      - name: Check pod logs if failing
+        continue-on-error: true
+        run: |
+          echo "📋 Checking pod logs..."
+          for pod in $(kubectl get pods -n stg-apps -l app=frontend -o jsonpath='{.items[*].metadata.name}'); do
+            echo "=== Logs for pod $pod ==="
+            kubectl logs $pod -n stg-apps --tail=50 || true
+            echo ""
+            echo "=== Description for pod $pod ==="
+            kubectl describe pod $pod -n stg-apps | tail -30 || true
+            echo ""
+          done
+
       - name: Wait for rollout
         run: |
-          kubectl rollout status deployment/frontend -n stg-apps --timeout=5m
+          kubectl rollout status deployment/frontend -n stg-apps --timeout=10m
 
       - name: Verify deployment
         run: |
