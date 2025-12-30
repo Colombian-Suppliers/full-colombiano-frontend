@@ -1,3 +1,4 @@
+import React from 'react';
 import { ReactNode, useEffect } from 'react';
 import { MdClose } from 'react-icons/md';
 

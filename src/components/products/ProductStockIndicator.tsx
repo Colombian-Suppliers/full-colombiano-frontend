@@ -1,3 +1,4 @@
+import React from 'react';
 import { MdCheckCircle, MdWarning, MdCancel } from 'react-icons/md';
 
 interface ProductStockIndicatorProps {

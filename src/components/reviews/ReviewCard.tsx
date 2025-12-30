@@ -1,3 +1,4 @@
+import React from 'react';
 import { StarRating } from '@/components/common';
 import { MdVerified } from 'react-icons/md';
 

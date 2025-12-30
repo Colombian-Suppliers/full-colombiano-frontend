@@ -1,3 +1,4 @@
+import React from 'react';
 import { useState, useEffect } from 'react';
 import { MdSearch, MdClose } from 'react-icons/md';
 

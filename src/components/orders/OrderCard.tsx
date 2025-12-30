@@ -1,3 +1,4 @@
+import React from 'react';
 import { StatusBadge } from '@/components/common';
 import { MdLocationOn, MdPerson } from 'react-icons/md';
 

@@ -1,3 +1,4 @@
+import React from 'react';
 interface ProductPriceProps {
   price: number;
   originalPrice?: number;

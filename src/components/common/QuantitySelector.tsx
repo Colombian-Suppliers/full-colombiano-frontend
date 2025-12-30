@@ -1,3 +1,4 @@
+import React from 'react';
 import { MdAdd, MdRemove } from 'react-icons/md';
 
 interface QuantitySelectorProps {

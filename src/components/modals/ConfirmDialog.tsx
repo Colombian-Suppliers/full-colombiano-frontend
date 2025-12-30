@@ -1,3 +1,4 @@
+import React from 'react';
 import Button from '@/components/ui/Button/Button';
 import { MdWarning, MdInfo, MdError, MdCheckCircle } from 'react-icons/md';
 

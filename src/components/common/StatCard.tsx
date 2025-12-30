@@ -1,3 +1,4 @@
+import React from 'react';
 import { MdInfoOutline } from 'react-icons/md';
 
 interface StatCardProps {

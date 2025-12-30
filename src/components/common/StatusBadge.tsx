@@ -1,3 +1,4 @@
+import React from 'react';
 interface StatusBadgeProps {
   status: string;
   statusConfig?: Record<string, { bg: string; text: string; label: string }>;
