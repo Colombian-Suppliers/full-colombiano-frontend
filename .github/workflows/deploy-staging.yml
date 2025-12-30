@@ -79,6 +79,7 @@ jobs:
           build-args: |
             NEXT_PUBLIC_API_URL=https://api-stg.fullcolombiano.com
             NEXT_PUBLIC_ENVIRONMENT=staging
+            NEXT_PUBLIC_SITE_URL=https://stg.fullcolombiano.com
             SKIP_API_TYPES_GENERATION=true
           cache-from: type=gha
           cache-to: type=gha,mode=max
@@ -122,6 +123,7 @@ jobs:
             --from-literal=NEXT_PUBLIC_API_URL=https://api-stg.fullcolombiano.com \
             --from-literal=NEXT_PUBLIC_ENVIRONMENT=staging \
             --from-literal=NEXT_PUBLIC_APP_NAME="Full Colombiano Staging" \
+            --from-literal=NEXT_PUBLIC_SITE_URL=https://stg.fullcolombiano.com \
             -n stg-apps --dry-run=client -o yaml | kubectl apply -f -
 
       - name: Verify image and show variables
@@ -155,6 +157,8 @@ jobs:
                 labels:
                   app: frontend
               spec:
+                imagePullSecrets:
+                - name: ghcr-secret
                 containers:
                 - name: nextjs
                   image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:staging

@@ -12,9 +12,10 @@ echo "============================================"
 
 # Configuration
 REGISTRY="ghcr.io"
-# Note: GitHub Container Registry is case-sensitive!
-# Use the exact organization name as it appears in GitHub (with capital letters)
-IMAGE_NAME="Colombian-Suppliers/full-colombiano-frontend"
+# Note: Docker requires repository names to be lowercase
+# GHCR normalizes organization names to lowercase automatically
+# GitHub Actions uses ${{ github.repository_owner }} which gets normalized by Docker
+IMAGE_NAME="colombian-suppliers/full-colombiano-frontend"
 IMAGE_TAG="staging"
 NAMESPACE="stg-apps"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -103,31 +104,36 @@ else
     fi
 fi
 
-# Step 2: Build Docker image
+# Step 2: Build and Push Docker image
 echo ""
-echo "🏗️  Step 2: Building Docker image..."
+echo "🏗️  Step 2: Building and pushing Docker image for linux/amd64..."
 cd "$FRONTEND_DIR"
-docker build \
+
+# Use buildx to build for the correct platform (linux/amd64 for VPS) and push directly
+SHORT_SHA=$(git rev-parse --short HEAD 2>/dev/null || echo "latest")
+
+docker buildx build \
+  --platform linux/amd64 \
   --build-arg NEXT_PUBLIC_API_URL=https://api-stg.fullcolombiano.com \
   --build-arg NEXT_PUBLIC_ENVIRONMENT=staging \
   --build-arg NEXT_PUBLIC_SITE_URL=https://stg.fullcolombiano.com \
   --build-arg SKIP_API_TYPES_GENERATION=true \
   -t ${REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG} \
-  -t ${REGISTRY}/${IMAGE_NAME}:staging-$(git rev-parse --short HEAD 2>/dev/null || echo "latest") \
+  -t ${REGISTRY}/${IMAGE_NAME}:staging-${SHORT_SHA} \
+  --push \
   .
 
 if [ $? -ne 0 ]; then
-    echo -e "${RED}❌ Docker build failed${NC}"
+    echo -e "${RED}❌ Docker build and push failed${NC}"
     exit 1
 fi
 
-echo "✅ Docker image built successfully"
+echo "✅ Docker image built and pushed successfully"
+echo "   Image: ${REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}"
 
-# Step 3: Push to registry
+# Step 3: Skip (already pushed with buildx)
 echo ""
-echo "📤 Step 3: Pushing image to GHCR..."
-docker push ${REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}
-docker push ${REGISTRY}/${IMAGE_NAME}:staging-$(git rev-parse --short HEAD 2>/dev/null || echo "latest")
+echo "✅ Step 3: Image already pushed (skipped - done in Step 2)"
 
 if [ $? -ne 0 ]; then
     echo -e "${RED}❌ Docker push failed${NC}"
