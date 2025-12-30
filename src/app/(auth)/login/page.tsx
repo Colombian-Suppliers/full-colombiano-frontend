@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/lib/hooks/useAuth';
@@ -25,7 +25,7 @@ interface LoginFormData {
   remember?: boolean;
 }
 
-export default function LoginPage() {
+function LoginPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { login, isLoading } = useAuth();
@@ -223,6 +223,22 @@ export default function LoginPage() {
         </div>
       </div>
     </Card>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <Card className="bg-white rounded-lg border border-gray-200 shadow-sm w-full max-w-md">
+          <div className="px-6 py-4">
+            <div className="text-center">Cargando...</div>
+          </div>
+        </Card>
+      </div>
+    }>
+      <LoginPageContent />
+    </Suspense>
   );
 }
 

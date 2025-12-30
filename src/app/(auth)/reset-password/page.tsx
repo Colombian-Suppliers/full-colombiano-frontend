@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
@@ -11,7 +11,7 @@ import { PasswordInput } from '@/components/ui/PasswordInput';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 
-export default function ResetPasswordPage() {
+function ResetPasswordPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(false);
@@ -177,6 +177,22 @@ export default function ResetPasswordPage() {
         </div>
       </Card>
     </div>
+  );
+}
+
+export default function ResetPasswordPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <Card className="bg-white rounded-lg border border-gray-200 shadow-sm w-full max-w-md">
+          <div className="px-6 py-4">
+            <div className="text-center">Cargando...</div>
+          </div>
+        </Card>
+      </div>
+    }>
+      <ResetPasswordPageContent />
+    </Suspense>
   );
 }
 

@@ -2,6 +2,8 @@
 
 Modern e-commerce platform frontend built with Next.js, TypeScript, and Tailwind CSS.
 
+> 📚 **Documentation**: Detailed documentation has been moved to the [full-colombiano-docs](https://github.com/Colombian-Suppliers/full-colombiano-docs) repository. See the [Documentation Index](https://github.com/Colombian-Suppliers/full-colombiano-docs/blob/main/docs/DOCUMENTATION_INDEX.md) for all available documentation.
+
 ## 🚀 Tech Stack
 
 - **Framework**: Next.js 14 (App Router)
