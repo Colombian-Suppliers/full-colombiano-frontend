@@ -37,6 +37,7 @@ jobs:
         run: npm ci
       
       - name: Generate API types
+        continue-on-error: true
         env:
           NEXT_PUBLIC_API_URL: ${{ github.event.inputs.backend_url || 'https://api-staging.fullcolombiano.com' }}
         run: npm run generate:api-types
