@@ -39,10 +39,9 @@ import {
  */
 const Sidebar = ({ collapsed = false, onToggle }) => {
   const { user, logout } = useAuth();
-  const { storeData } = useStore();
-  const { unreadAnnouncementsCount } = useNotificationsStore();
   const pathname = usePathname();
   const router = useRouter();
+  const unreadAnnouncementsCount = 0;
   const [showSettingsDropdown, setShowSettingsDropdown] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -126,12 +125,22 @@ const Sidebar = ({ collapsed = false, onToggle }) => {
   const [openGroup, setOpenGroup] = useState(null);
   const [mountedGroups, setMountedGroups] = useState(new Set());
   const mountedTimers = useRef(new Map());
+  const isMountedRef = useRef(true);
   const sidebarRef = useRef(null);
   const groupButtonRefs = useRef(new Map());
   const portalOverlayRef = useRef(null);
   // Overlay coordinates used for portal rendering (viewport coords)
   const [overlayTop, setOverlayTop] = useState(0);
   const [overlayLeft, setOverlayLeft] = useState(0);
+
+  useEffect(() => {
+    const timers = mountedTimers.current;
+    return () => {
+      isMountedRef.current = false;
+      timers.forEach((t) => clearTimeout(t));
+      timers.clear();
+    };
+  }, []);
 
   // toggle a group, ensuring only one remains open at a time
   const toggleGroup = (key) => {
@@ -159,6 +168,7 @@ const Sidebar = ({ collapsed = false, onToggle }) => {
         // schedule unmount
         if (!mountedTimers.current.get(gk)) {
           const timer = setTimeout(() => {
+            if (!isMountedRef.current) return;
             setMountedGroups((prev) => {
               const copy = new Set(prev);
               copy.delete(gk);
@@ -382,7 +392,7 @@ const Sidebar = ({ collapsed = false, onToggle }) => {
           {!collapsed && (
             <div className="flex flex-col min-w-0 transition-all duration-200">
               <h1 className="text-[#0d141b] text-base font-medium leading-normal truncate">
-                {storeData?.name || user?.email || user?.name || 'Usuario'}
+                {user?.name || user?.email || 'Usuario'}
               </h1>
               <p className="text-[#4c739a] text-sm font-normal leading-normal">
                 {user?.role === 'vendor'
@@ -401,7 +411,7 @@ const Sidebar = ({ collapsed = false, onToggle }) => {
             <div key={g.key}>
               {!g.children ? (
                 <Link
-                  to={g.path}
+                  href={g.path}
                   onClick={() => setShowSettingsDropdown(false)}
                   onMouseDown={() => setShowSettingsDropdown(false)}
                   className={`group relative flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-200 ${
@@ -516,7 +526,7 @@ const Sidebar = ({ collapsed = false, onToggle }) => {
                           {g.children.map((c) => (
                             <Link
                               key={c.key}
-                              to={c.path}
+                              href={c.path}
                               onClick={() => {
                                 setShowSettingsDropdown(false);
                                 setOpenGroup(null);
