@@ -26,12 +26,15 @@
 
 1. **Start with Complete Registration Flow** (2 min)
    - Navigate to: `Auth > RegisterFlow > Complete Flow`
-   - **Say**: "This is our complete registration system with multi-step forms"
+   - **Say**: "This is our complete registration system with multi-step forms and real validation"
    - **Demo**: Click through the entire buyer registration flow
      - Step 1: Select "Comprador" (Buyer)
-     - Step 2: Fill personal info (show validation)
+     - Step 2: Fill personal info (show validation - try to continue without filling fields!)
      - Step 3: Fill credentials (show password requirements)
-   - **Highlight**: "Notice the real-time validation and clear error messages"
+   - **Demo Seller Flow**: Show dynamic city selection
+     - Select "Vendedor" → "Persona Natural"
+     - Fill store info, select "Valle del Cauca" → cities update to Cali, Palmira, etc.
+   - **Highlight**: "Notice the real-time validation prevents advancing without valid data"
 
 2. **Show Login Variants** (1 min)
    - Navigate to: `Auth > Login > Default`
