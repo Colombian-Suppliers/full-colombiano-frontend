@@ -48,7 +48,7 @@ export const NewsletterCTA = () => {
               />
               <button
                 type="submit"
-                className="bg-[#1E1E1E] hover:bg-black text-white font-bold px-8 py-4 rounded-r-full transition-colors uppercase tracking-wide text-sm"
+                className="bg-[#72B059] hover:bg-[#5a9045] text-white font-bold px-8 py-4 rounded-r-full transition-colors uppercase tracking-wide text-sm"
               >
                 Suscribirme
               </button>
