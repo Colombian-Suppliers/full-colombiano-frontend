@@ -21,6 +21,16 @@ module.exports = {
           700: '#345621',  // Headings, link hover (text-primary-700, hover:text-primary-700)
           800: '#2b411a',  // Darker shades
           900: '#222c13',  // Darkest
+          50: '#f0f9f0',
+          100: '#e0f2e0',
+          200: '#c1e5c1',
+          300: '#a2d8a2',
+          400: '#83cb83',
+          500: '#46802f',
+          600: '#3d6b28',
+          700: '#345621',
+          800: '#2b411a',
+          900: '#222c13',
         },
         // Secondary Color Palette (Dark Green)
         // Used for: gradient backgrounds, secondary buttons
@@ -49,19 +59,23 @@ module.exports = {
           700: '#374151',  // Form labels (text-gray-700)
           800: '#1f2937',
           900: '#111827',  // Body text (text-gray-900)
+          50: '#f0f9f0',
+          100: '#e0f2e0',
+          200: '#c1e5c1',
+          300: '#a2d8a2',
+          400: '#83cb83',
+          500: '#1b5903',
+          600: '#164d03',
+          700: '#124102',
+          800: '#0e3502',
+          900: '#0a2901',
         },
         // Additional theme colors
         'background-light': '#f6f7f8',
       },
       fontFamily: {
-        display: [
-          'system-ui',
-          '-apple-system',
-          'BlinkMacSystemFont',
-          "'Segoe UI'",
-          'Roboto',
-          'sans-serif',
-        ],
+        display: ['Montserrat', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        sans: ['Poppins', 'ui-sans-serif', 'system-ui', 'sans-serif'],
       },
       borderRadius: {
         DEFAULT: '0.25rem',
@@ -73,4 +87,3 @@ module.exports = {
   },
   plugins: [],
 };
-
