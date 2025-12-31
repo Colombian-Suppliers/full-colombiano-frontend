@@ -13,8 +13,12 @@
 // Shared components
 export * from './shared';
 
-// Buyer registration flow
-export * from './buyer';
+export { default as BuyerStep1PersonalInfo } from './buyer/Step1PersonalInfo';
+export { default as BuyerStep2PersonalInfo } from './buyer/Step2PersonalInfo';
+export { default as BuyerStep3Credentials } from './buyer/Step3Credentials';
+
+export { default as SellerStep1PersonType } from './seller/Step1PersonType';
+export { default as SellerStep2StoreInfo } from './seller/Step2StoreInfo';
 
 // Seller registration flow - explicitly export to avoid conflicts
 export { 
