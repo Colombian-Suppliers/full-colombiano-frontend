@@ -7,6 +7,8 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'react-hot-toast';
 import { FaLock } from 'react-icons/fa';
 import { ROUTES } from '@/config/routes.config';
+import { authApiService } from '@/lib/api/services/auth.service';
+import { TOAST_MESSAGES } from '@/utils/toastMessages';
 import { PasswordInput } from '@/components/ui/PasswordInput';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
@@ -53,20 +55,24 @@ function ResetPasswordPageContent() {
 
     try {
       setIsLoading(true);
-      // TODO: Replace with actual API call when backend is ready
-      // await authApiService.resetPassword({
-      //   token,
-      //   new_password: data.newPassword,
-      //   confirm_password: data.confirmPassword,
-      // });
-      
-      // Simulating API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      await authApiService.resetPassword({
+        token,
+        new_password: data.newPassword,
+        confirm_password: data.confirmPassword,
+      });
 
-      toast.success('Contraseña actualizada exitosamente');
+      toast.success(
+        TOAST_MESSAGES.RESET_PASSWORD_SUCCESS ||
+          'Contraseña actualizada exitosamente'
+      );
       router.push(ROUTES.LOGIN);
     } catch (error) {
-      toast.error('Error al actualizar contraseña');
+      const message =
+        error instanceof Error
+          ? error.message
+          : TOAST_MESSAGES.RESET_PASSWORD_ERROR ||
+            'Error al actualizar contraseña';
+      toast.error(message);
     } finally {
       setIsLoading(false);
     }
