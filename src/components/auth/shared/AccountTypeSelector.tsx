@@ -16,15 +16,24 @@ const RegisterStep1AccountType = ({ register, watch, next, setValue }) => {
               shouldDirty: true,
             });
           }}
-          className={`flex flex-col items-center justify-center p-10 border-2 rounded-xl transition-all duration-300 cursor-pointer ${
+          className={`relative flex flex-col items-center justify-center p-10 border-2 rounded-xl transition-all duration-300 cursor-pointer ${
             role === 'buyer'
               ? 'border-primary-500 bg-primary-50/50 shadow-lg'
               : 'border-gray-200 bg-white hover:border-primary-300 hover:shadow-md'
           }`}
+          role="button"
+          tabIndex={0}
         >
+          {/* Selected badge */}
+          {role === 'buyer' && (
+            <div className="absolute top-3 right-3 bg-primary-500 text-white text-xs font-semibold px-3 py-1 rounded-full">
+              ✓ Seleccionado
+            </div>
+          )}
+
           {/* Ícono de carrito */}
           <div className="mb-6">
-            <FaShoppingCart className="text-6xl text-gray-700" />
+            <FaShoppingCart className={`text-6xl transition-colors ${role === 'buyer' ? 'text-primary-600' : 'text-gray-700'}`} />
           </div>
 
           <input
@@ -36,7 +45,7 @@ const RegisterStep1AccountType = ({ register, watch, next, setValue }) => {
 
           <h3 className="text-xl font-bold text-gray-900 mb-2">Comprador</h3>
           <p className="text-center text-sm text-gray-500">
-            Busca y compra productos colombianos
+            Busca y compra productos colombianos auténticos
           </p>
         </div>
 
@@ -48,15 +57,24 @@ const RegisterStep1AccountType = ({ register, watch, next, setValue }) => {
               shouldDirty: true,
             });
           }}
-          className={`flex flex-col items-center justify-center p-10 border-2 rounded-xl transition-all duration-300 cursor-pointer ${
+          className={`relative flex flex-col items-center justify-center p-10 border-2 rounded-xl transition-all duration-300 cursor-pointer ${
             role === 'seller'
               ? 'border-primary-500 bg-primary-50/50 shadow-lg'
               : 'border-gray-200 bg-white hover:border-primary-300 hover:shadow-md'
           }`}
+          role="button"
+          tabIndex={0}
         >
+          {/* Selected badge */}
+          {role === 'seller' && (
+            <div className="absolute top-3 right-3 bg-primary-500 text-white text-xs font-semibold px-3 py-1 rounded-full">
+              ✓ Seleccionado
+            </div>
+          )}
+
           {/* Ícono de tienda */}
           <div className="mb-6">
-            <FaStore className="text-6xl text-gray-700" />
+            <FaStore className={`text-6xl transition-colors ${role === 'seller' ? 'text-primary-600' : 'text-gray-700'}`} />
           </div>
 
           <input
@@ -68,7 +86,7 @@ const RegisterStep1AccountType = ({ register, watch, next, setValue }) => {
 
           <h3 className="text-xl font-bold text-gray-900 mb-2">Vendedor</h3>
           <p className="text-center text-sm text-gray-500">
-            Vende tus productos en todo el país
+            Vende tus productos y llega a más clientes
           </p>
         </div>
       </div>
