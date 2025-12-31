@@ -1,7 +1,8 @@
 // @ts-nocheck
-import React from 'react';import { MdNotifications } from 'react-icons/md';
-import { formatRelativeDateColombian } from "@/utils/dateUtils";
-import { getPlainTextPreview } from "@/utils/htmlUtils";
+import React from 'react';
+import { MdNotifications } from 'react-icons/md';
+import { formatRelativeDateColombian } from '@/utils/dateUtils';
+import { getPlainTextPreview } from '@/utils/htmlUtils';
 
 /**
  * Componente para el header de selección de la lista
@@ -59,7 +60,7 @@ const AnnouncementListItem = ({
             : 'bg-gray-50/50'
       }`}
     >
-      <div className="px-4  py-3 h-14">
+      <div className="px-8 py-3 h-14">
         <div className="flex items-center gap-4 h-full">
           {/* Checkbox */}
           <input
@@ -152,7 +153,7 @@ const AnnouncementsList = ({
   return (
     <div
       data-testid="announcements-list-panel"
-      className="w-full md:w-3/10 bg-white overflow-y-auto flex-shrink-0 h-full flex flex-col"
+      className="w-full md:w-2/5 bg-white overflow-y-auto flex-shrink-0 h-full flex flex-col"
     >
       {/* Select All Header (can be hidden when using global header) */}
       {!hideHeader && (
