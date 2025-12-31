@@ -17,31 +17,18 @@ interface FaqData {
   highlight?: string;
 }
 
-const FaqItem = ({ q, a, highlight }: FaqItemProps) => {
+const FaqItem = ({ q, a }: FaqItemProps) => {
   const [open, setOpen] = useState(false);
 
-  // Function to highlight keywords in the question
-  const renderQuestion = () => {
-    if (!highlight) return q;
-    const parts = q.split(new RegExp(`(${highlight})`, 'gi'));
-    return parts.map((part, i) =>
-      part.toLowerCase() === highlight.toLowerCase() ? (
-        <span key={i} className="text-[#72B059] font-semibold">
-          {part}
-        </span>
-      ) : (
-        part
-      )
-    );
-  };
+  const renderQuestion = () => q;
 
   return (
     <div className="mb-4">
       <button
         className={`w-full text-left py-4 px-6 flex justify-between items-center rounded-xl transition-all duration-300 ${
           open
-            ? 'bg-[#72B059] text-white shadow-md'
-            : 'bg-[#72B059]/10 text-gray-800 hover:bg-[#72B059]/20'
+            ? 'bg-[#e7f2e4] text-gray-800 shadow-md'
+            : 'bg-[#e7f2e4] text-gray-800'
         }`}
         onClick={() => setOpen((s) => !s)}
         aria-expanded={open}
@@ -50,7 +37,7 @@ const FaqItem = ({ q, a, highlight }: FaqItemProps) => {
           {open ? q : renderQuestion()}
         </span>
         <FiChevronDown
-          className={`w-5 h-5 flex-shrink-0 transition-transform duration-300 ${
+          className={`w-5 h-5 shrink-0 text-[#72B059] transition-transform duration-300 ${
             open ? 'rotate-180' : ''
           }`}
         />
@@ -101,9 +88,9 @@ export const FAQ = () => {
       <div className="container mx-auto px-4">
         {/* Title */}
         <div className="text-center mb-10">
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900">
-            <span className="font-bold">Preguntas</span>{' '}
-            <span className="font-light">frecuentes</span>
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold">
+            <span className="text-[#72B059]">Preguntas</span>{' '}
+            <span className="text-gray-800 font-light">frecuentes</span>
           </h2>
         </div>
 
