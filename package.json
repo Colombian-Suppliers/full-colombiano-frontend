@@ -15,7 +15,7 @@
     "test:watch": "vitest --watch",
     "test:coverage": "vitest --coverage",
     "test:ui": "vitest --ui",
-    "test:e2e": "playwright test",
+    "test:e2e": "playwright test --project=chromium --project=firefox --project=webkit --project=\"Mobile Chrome\" --project=\"Mobile Safari\"",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:headed": "playwright test --headed",
     "e2e:install": "playwright install --with-deps",
