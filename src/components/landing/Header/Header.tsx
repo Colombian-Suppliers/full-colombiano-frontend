@@ -6,7 +6,6 @@ import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import {
-  FiSearch,
   FiHeart,
   FiUser,
   FiShoppingBag,
@@ -14,6 +13,7 @@ import {
   FiX,
 } from 'react-icons/fi';
 import { IoChevronDown } from 'react-icons/io5';
+import { SearchBar } from '@/components/ui/SearchBar';
 
 interface NavLink {
   label: string;
@@ -39,23 +39,28 @@ export const Header = () => {
 
   const navLinks: NavLink[] = [
     { label: 'Inicio', href: '/' },
-    { label: 'Quiénes somos', href: '/about-us' },
+    { label: 'Productos', href: '/productos' },
     {
-      label: 'Tienda',
+      label: 'Categorías',
       href: '/marketplace',
       hasDropdown: true,
       dropdownItems: [
-        { label: 'Todos los productos', href: '/marketplace' },
-        { label: 'Categorías', href: '/marketplace/categories' },
-        { label: 'Ofertas', href: '/marketplace/offers' },
+        { label: 'Todas', href: '/marketplace' },
+        { label: 'Moda y accesorios', href: '/marketplace?cat=moda' },
+        { label: 'Hogar y decoracion', href: '/marketplace?cat=hogar' },
+        { label: 'Alimentos y bebidas', href: '/marketplace?cat=alimentos' },
+        { label: 'Mascotas', href: '/marketplace?cat=mascotas' },
+        { label: 'Artesanias', href: '/marketplace?cat=artesanias' },
       ],
     },
-    { label: 'Contáctenos', href: '#contact' },
+    { label: 'Tiendas', href: '/tiendas' },
+    { label: 'Nosotros', href: '/about-us' },
+    { label: 'Contacto', href: '/contact-us' },
+    { label: 'Vendedores', href: '/vendors' },
     { label: 'Blog', href: '/blog' },
   ];
 
   const actionIcons: ActionIcon[] = [
-    { Icon: FiSearch, label: 'Buscar', href: '#search' },
     { Icon: FiHeart, label: 'Favoritos', href: '/favorites' },
     { Icon: FiUser, label: 'Mi cuenta', href: '/login' },
     { Icon: FiShoppingBag, label: 'Carrito', href: '/cart' },
@@ -66,7 +71,7 @@ export const Header = () => {
       <nav className="container mx-auto px-4 lg:px-8">
         <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
-          <Link href="/" className="flex-shrink-0">
+          <Link href="/" className="shrink-0">
             <Image
               src="/logo.svg"
               alt="Full Colombiano"
@@ -121,13 +126,21 @@ export const Header = () => {
             ))}
           </div>
 
+          <div className="hidden lg:flex flex-1 mx-6 max-w-xl">
+            <SearchBar onSearch={() => {}} placeholder="Buscar productos." />
+          </div>
+
           {/* Action Icons - Desktop */}
           <div className="hidden lg:flex items-center gap-2">
             {actionIcons.map(({ Icon, label, href }) => (
               <Link
                 key={label}
                 href={href}
-                className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-600 hover:text-secondary-600 hover:border-secondary-300 transition-colors"
+                className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${
+                  label === 'Carrito'
+                    ? 'border-2 border-[#72B059] text-[#72B059] hover:bg-[#72B059] hover:text-white'
+                    : 'border border-gray-200 text-gray-600 hover:text-secondary-600 hover:border-secondary-300'
+                }`}
                 aria-label={label}
               >
                 <Icon className="w-5 h-5" />
@@ -153,6 +166,9 @@ export const Header = () => {
         {mobileMenuOpen && (
           <div className="lg:hidden border-t border-gray-100 py-4">
             <div className="flex flex-col gap-4">
+              <div className="px-1">
+                <SearchBar onSearch={() => {}} placeholder="Buscar productos." />
+              </div>
               {navLinks.map((link) => (
                 <div key={link.label}>
                   {link.hasDropdown ? (
@@ -201,7 +217,11 @@ export const Header = () => {
                   <Link
                     key={label}
                     href={href}
-                    className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-600"
+                    className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                      label === 'Carrito'
+                        ? 'border-2 border-[#72B059] text-[#72B059]'
+                        : 'border border-gray-200 text-gray-600'
+                    }`}
                     aria-label={label}
                     onClick={() => setMobileMenuOpen(false)}
                   >
