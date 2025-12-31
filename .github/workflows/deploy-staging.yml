@@ -38,7 +38,23 @@ jobs:
         run: npm run type-check || npx tsc --noEmit || echo "Type check script not found, skipping"
 
       - name: Run tests
-        run: npm test -- --run || echo "Test script not found, skipping"
+        run: npm test -- --passWithNoTests
+
+      - name: Build application
+        env:
+          NEXT_PUBLIC_API_URL: https://api-stg.fullcolombiano.com
+          NEXT_PUBLIC_ENVIRONMENT: staging
+        run: npm run build
+
+      - name: Install Playwright
+        run: npx playwright install --with-deps
+
+      - name: Run E2E tests (Desktop + Mobile)
+        env:
+          CI: true
+          NEXT_PUBLIC_API_URL: https://api-stg.fullcolombiano.com
+          NEXT_PUBLIC_ENVIRONMENT: staging
+        run: npm run test:e2e
 
   build-and-push:
     name: Build and Push Docker Image
