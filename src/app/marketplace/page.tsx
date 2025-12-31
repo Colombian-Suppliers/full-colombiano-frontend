@@ -14,15 +14,14 @@ export default function MarketplacePage() {
       try {
         const token = localStorage.getItem('auth_token');
         if (!token) {
-          router.push('/login');
           return;
         }
 
         const userData = await api.auth.getCurrentUser();
         setUser(userData);
       } catch (error) {
-        console.error('Failed to load user:', error);
-        router.push('/login');
+        localStorage.removeItem('auth_token');
+        localStorage.removeItem('user');
       } finally {
         setLoading(false);
       }
@@ -54,17 +53,34 @@ export default function MarketplacePage() {
       <header className="bg-white shadow">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
           <h1 className="text-2xl font-bold text-gray-900">Marketplace</h1>
-          <div className="flex items-center gap-4">
-            <span className="text-sm text-gray-600">
-              Hola, {user?.display_name || user?.email}
-            </span>
-            <button
-              onClick={handleLogout}
-              className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
-            >
-              Cerrar Sesión
-            </button>
-          </div>
+          {user ? (
+            <div className="flex items-center gap-4">
+              <span className="text-sm text-gray-600">
+                Hola, {user?.display_name || user?.email}
+              </span>
+              <button
+                onClick={handleLogout}
+                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+              >
+                Cerrar Sesión
+              </button>
+            </div>
+          ) : (
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => router.push('/login')}
+                className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                Iniciar sesión
+              </button>
+              <button
+                onClick={() => router.push('/register')}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                Registrarme
+              </button>
+            </div>
+          )}
         </div>
       </header>
 
@@ -73,7 +89,7 @@ export default function MarketplacePage() {
         {/* Welcome Banner */}
         <div className="bg-gradient-to-r from-blue-600 to-blue-800 rounded-lg shadow-lg p-8 mb-8 text-white">
           <h2 className="text-3xl font-bold mb-2">
-            ¡Bienvenido al Marketplace, {user?.display_name}!
+            ¡Bienvenido al Marketplace{user?.display_name ? `, ${user.display_name}` : ''}!
           </h2>
           <p className="text-blue-100">
             Descubre productos increíbles de vendedores colombianos
