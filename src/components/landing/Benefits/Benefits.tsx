@@ -1,5 +1,6 @@
 // @ts-nocheck
-import React from 'react';import { FiCheck } from 'react-icons/fi';
+import React from 'react';
+import { FiCheck } from 'react-icons/fi';
 
 interface Benefit {
   title: string;
@@ -13,12 +14,12 @@ interface BenefitItemProps {
 
 const BenefitItem = ({ title, description }: BenefitItemProps) => (
   <div className="flex items-start gap-3">
-    <div className="flex-shrink-0 w-6 h-6 rounded-full bg-[#72B059] flex items-center justify-center mt-0.5">
+    <div className="shrink-0 w-6 h-6 rounded-full bg-[#72B059] flex items-center justify-center mt-0.5">
       <FiCheck className="w-4 h-4 text-white" />
     </div>
     <div>
-      <h4 className="font-semibold text-white text-base">{title}</h4>
-      <p className="text-white/80 text-sm">{description}</p>
+      <h4 className="typo-benefit-item-title">{title}</h4>
+      <p className="typo-benefit-item-desc">{description}</p>
     </div>
   </div>
 );
@@ -67,12 +68,8 @@ export const Benefits = () => {
       <div className="relative container mx-auto px-4">
         <div className="max-w-lg">
           {/* Title */}
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white mb-2">
-            Nuestros
-          </h2>
-          <h3 className="text-2xl md:text-3xl font-bold text-[#72B059] mb-10">
-            Beneficios
-          </h3>
+          <h2 className="typo-benefits-title-primary mb-2">Nuestros</h2>
+          <h3 className="typo-benefits-title-secondary mb-10">Beneficios</h3>
 
           {/* Benefits List */}
           <div className="space-y-6">
