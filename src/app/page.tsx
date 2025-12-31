@@ -5,6 +5,7 @@ import Hero from '@/components/landing/Hero/Hero';
 import AboutUs from '@/components/landing/AboutUs/AboutUs';
 import Banner from '@/components/landing/Banner/Banner';
 import Benefits from '@/components/landing/Benefits/Benefits';
+import QuickBenefits from '@/components/landing/QuickBenefits/QuickBenefits';
 import CategoriesCarousel from '@/components/landing/CategoriesCarousel/CategoriesCarousel';
 import RegisterSection from '@/components/landing/RegisterSection/RegisterSection';
 import FAQ from '@/components/landing/FAQ/FAQ';
@@ -21,11 +22,14 @@ export default function HomePage() {
         {/* Hero Section con imagen de fondo */}
         <Hero />
 
+        {/* Beneficios rapidos en fondo blanco */}
+        <QuickBenefits />
+
         {/* Sección About Us */}
         <AboutUs />
 
         {/* Banner decorativo */}
-        <Banner>Inspirados en nuestras raíces, creados para el mundo.</Banner>
+        <Banner>Publica facil, vende bacano!</Banner>
 
         <Benefits />
 
