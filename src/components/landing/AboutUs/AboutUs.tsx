@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React from 'react';import Image from 'next/image';
+import React from 'react';
 import Link from 'next/link';
 import {
   FaShoppingCart,
@@ -21,8 +21,10 @@ const IconFeature = ({ Icon, title, subtitle }: IconFeatureProps) => (
       <Icon className="w-6 h-6" aria-hidden />
     </div>
     <div className="text-white">
-      <div className="font-semibold text-sm">{title}</div>
-      <div className="text-xs opacity-90">{subtitle}</div>
+      <div className="font-sans font-bold text-white text-[16px]">{title}</div>
+      <div className="font-sans font-normal text-white/90 text-[16px]">
+        {subtitle}
+      </div>
     </div>
   </div>
 );
@@ -67,31 +69,33 @@ export const AboutUs = ({ title = 'Somos Full Colombiano' }: AboutUsProps) => {
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
           <div>
-            <h2 className="text-3xl md:text-4xl mb-6 font-display">
+            <h2 className="mb-6 font-display font-medium text-[#1B5903] text-[22px] sm:text-[26px] lg:text-[28px] 2xl:text-[32px]">
               <span className="mr-2 font-light italic">{firstWord}</span>
               <span className="font-extrabold text-[#72B059]">{rest}</span>
             </h2>
 
-            <p className="text-gray-600 leading-relaxed mb-4 text-sm md:text-base">
+            <p className="mb-4 font-sans font-light text-[#2C2C2C] leading-relaxed text-[14px] sm:text-[15px] lg:text-[16px]">
               <Link
                 href="/"
-                className="text-[#72B059] decoration-1 underline-offset-2 hover:text-[#5a9a47]"
+                className="font-sans font-bold text-[#72B059] decoration-1 hover:text-[#5a9a47]"
               >
                 Full Colombiano
               </Link>{' '}
               es un marketplace de productos colombianos.{' '}
-              <span className="font-semibold">¿Y eso qué quiere decir?</span>{' '}
+              <span className="font-sans font-bold text-[#2C2C2C]">
+                Y eso qué quiere decir?
+              </span>{' '}
               Imagínate un centro comercial que funciona de forma virtual,
               abierto las 24 horas, los 7 días de la semana, donde miles de
               personas podrán comprar tus productos y conocer tu marca, sin
               pagar arriendo y sin complicaciones.
             </p>
 
-            <p className="text-gray-600 leading-relaxed mb-4 text-sm md:text-base">
+            <p className="mb-4 font-sans font-light text-[#2C2C2C] leading-relaxed text-[14px] sm:text-[15px] lg:text-[16px]">
               En{' '}
               <Link
                 href="/"
-                className="text-[#72B059] decoration-1 underline-offset-2 hover:text-[#5a9a47]"
+                className="font-sans font-bold text-[#72B059] decoration-1 underline underline-offset-2 hover:text-[#5a9a47]"
               >
                 Full Colombiano
               </Link>{' '}
@@ -103,7 +107,7 @@ export const AboutUs = ({ title = 'Somos Full Colombiano' }: AboutUsProps) => {
               más importante: crear y ofrecer los mejores productos colombianos.
             </p>
 
-            <p className="text-gray-600 leading-relaxed text-sm md:text-base">
+            <p className="font-sans font-light text-[#2C2C2C] leading-relaxed text-[14px] sm:text-[15px] lg:text-[16px]">
               Creemos en el poder de los emprendedores y en el valor de
               construir juntos un país lleno de oportunidades.
             </p>
@@ -111,14 +115,14 @@ export const AboutUs = ({ title = 'Somos Full Colombiano' }: AboutUsProps) => {
 
           <div className="flex justify-center lg:justify-end">
             <div className="relative w-full max-w-md">
-              <div className="relative rounded-2xl overflow-hidden shadow-2xl h-80 md:h-96">
-                <Image
-                  src="/images/landing/vid-kev.webp"
-                  alt="Full Colombiano video"
-                  fill
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                  className="object-cover"
-                />
+              <div className="relative rounded-2xl overflow-hidden shadow-2xl bg-[#e7e7e7] flex items-center justify-center h-80 md:h-96">
+                <button
+                  type="button"
+                  aria-label="Reproducir video"
+                  className="w-14 h-14 rounded-full bg-white/80 flex items-center justify-center"
+                >
+                  <div className="w-0 h-0 border-l-10 border-t-8 border-b-8 border-l-[#72B059] border-t-transparent border-b-transparent ml-1" />
+                </button>
               </div>
             </div>
           </div>
