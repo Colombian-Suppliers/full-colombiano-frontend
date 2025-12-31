@@ -1,5 +1,6 @@
 // @ts-nocheck
-import React from 'react';import { ReactNode } from 'react';
+import React from 'react';
+import { ReactNode } from 'react';
 
 export interface BannerProps {
   children?: ReactNode;
@@ -23,7 +24,7 @@ export const Banner = ({
       />
 
       <div className="relative container mx-auto px-4 lg:px-8 text-center">
-        <p className="text-lg md:text-xl lg:text-2xl font-medium">
+        <p className="typo-banner">
           {children || 'Inspirados en nuestras raíces, creados para el mundo.'}
         </p>
       </div>
