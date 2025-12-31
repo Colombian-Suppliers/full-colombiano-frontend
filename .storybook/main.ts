@@ -22,7 +22,10 @@ const config: StorybookConfig = {
     options: {},
   },
 
-  staticDirs: ['../public'],
+  staticDirs: [
+    { from: '../public/images/landing', to: '/images/landing' },
+    { from: '../public/images/cats', to: '/images/cats' },
+  ],
 
   async viteFinal(config) {
     return mergeConfig(config, {
