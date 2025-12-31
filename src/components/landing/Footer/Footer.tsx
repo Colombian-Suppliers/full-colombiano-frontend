@@ -1,5 +1,6 @@
 // @ts-nocheck
-import React from 'react';import Link from 'next/link';
+import React from 'react';
+import Link from 'next/link';
 import Image from 'next/image';
 import {
   FaInstagram,
@@ -34,25 +35,25 @@ export const Footer = () => {
     conocenos: {
       title: 'Conócenos',
       links: [
-        { label: 'Nosotros', href: '/about' },
-        { label: 'Contacto', href: '/contact' },
-        { label: 'Preguntas frecuentes', href: '#faq' },
+        { label: 'Nosotros', href: '/about-us' },
+        { label: 'Contacto', href: '/contact-us' },
+        { label: 'Preguntas frecuentes', href: '/#faq' },
         { label: 'Ayuda/PQR', href: '/help' },
       ],
     },
     enlaces: {
       title: 'Enlaces de interés',
       links: [
-        { label: 'Tutoriales', href: '/tutorials' },
+        { label: 'Tutoriales', href: '/tutoriales' },
         { label: 'Blog', href: '/blog' },
         { label: 'Foro', href: '/forum' },
-        { label: 'Para vendedores', href: '/sellers' },
+        { label: 'Para vendedores', href: '/vendors' },
       ],
     },
     politicas: {
       title: 'Nuestras políticas',
       links: [
-        { label: 'Términos y condiciones', href: '/terms' },
+        { label: 'Términos y condiciones', href: '/terminos' },
         { label: 'Política de privacidad', href: '/privacy' },
         { label: 'Política de Cookies', href: '/cookies' },
         { label: 'Otras políticas', href: '/policies' },
@@ -128,9 +129,9 @@ export const Footer = () => {
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             {/* Copyright */}
             <p className="text-gray-400 text-xs md:text-sm text-center md:text-left">
-              Copyright © {currentYear} | Full Colombiano | Colombian Suppliers
+              Copyright (c) {currentYear} | Full Colombiano | Colombian Suppliers
               SAS - Todos los derechos reservados | Hecho en Colombia con{' '}
-              <span className="text-red-500">❤</span>
+              <span className="text-red-500">?</span>
             </p>
 
             {/* Social Links */}
