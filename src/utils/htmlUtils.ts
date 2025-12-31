@@ -4,23 +4,40 @@
  */
 
 /**
- * Extrae el contenido de texto de un string HTML
+ * Extrae el contenido del body de un string HTML
  * @param html - String con contenido HTML
- * @returns Texto sin etiquetas HTML
+ * @returns Contenido del body o el HTML original si no hay body
  */
 export const extractBodyContent = (html: string): string => {
   if (!html) return '';
 
-  // Remove HTML tags
-  const text = html.replace(/<[^>]*>/g, '');
+  try {
+    let processedHtml = html;
 
-  // Decode HTML entities
-  const textarea = document.createElement('textarea');
-  textarea.innerHTML = text;
-  const decoded = textarea.value;
+    // Decode HTML entities if escaped (e.g. &lt; -> <)
+    const textarea = document.createElement('textarea');
+    textarea.innerHTML = html;
+    const decoded = textarea.value;
 
-  // Clean up extra whitespace
-  return decoded.trim().replace(/\s+/g, ' ');
+    if (decoded !== html) {
+      processedHtml = decoded;
+    }
+
+    // If the HTML includes a full document, extract body content
+    if (processedHtml.includes('<!DOCTYPE') || processedHtml.includes('<html')) {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(processedHtml, 'text/html');
+      const body = doc.querySelector('body');
+      if (body && body.innerHTML) {
+        return body.innerHTML;
+      }
+    }
+
+    return processedHtml;
+  } catch (error) {
+    console.error('Error al extraer contenido del body:', error);
+    return html;
+  }
 };
 
 /**
@@ -30,7 +47,7 @@ export const extractBodyContent = (html: string): string => {
  * @returns Texto truncado con "..."
  */
 export const truncateHtml = (html: string, maxLength: number = 150): string => {
-  const text = extractBodyContent(html);
+  const text = getPlainTextPreview(html);
   if (text.length <= maxLength) return text;
   return text.substring(0, maxLength).trim() + '...';
 };
@@ -41,8 +58,19 @@ export const truncateHtml = (html: string, maxLength: number = 150): string => {
  * @param maxLength - Longitud máxima del texto (default: 150)
  * @returns Vista previa en texto plano
  */
-export const getPlainTextPreview = (html: string, maxLength: number = 150): string => {
-  return truncateHtml(html, maxLength);
+export const getPlainTextPreview = (html: string): string => {
+  if (!html) return '';
+
+  try {
+    const processedHtml = extractBodyContent(html);
+    const temp = document.createElement('div');
+    temp.innerHTML = processedHtml;
+    const text = temp.textContent || temp.innerText || '';
+    return text.replace(/\s+/g, ' ').trim();
+  } catch (error) {
+    console.error('Error al extraer texto plano:', error);
+    return '';
+  }
 };
 
 /**
@@ -53,14 +81,34 @@ export const getPlainTextPreview = (html: string, maxLength: number = 150): stri
 export const sanitizeHtml = (html: string): string => {
   if (!html) return '';
 
-  // Basic sanitization - remove script tags and event handlers
-  const sanitized = html
-    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-    .replace(/on\w+\s*=\s*"[^"]*"/gi, '')
-    .replace(/on\w+\s*=\s*'[^']*'/gi, '')
-    .replace(/javascript:/gi, '');
+  try {
+    const temp = document.createElement('div');
+    temp.innerHTML = html;
 
-  return sanitized;
+    const scripts = temp.querySelectorAll('script, iframe, object, embed');
+    scripts.forEach((script) => script.remove());
+
+    const allElements = temp.querySelectorAll('*');
+    allElements.forEach((element) => {
+      const dangerousAttrs = [
+        'onclick',
+        'onload',
+        'onerror',
+        'onmouseover',
+        'onmouseout',
+      ];
+      dangerousAttrs.forEach((attr) => {
+        if (element.hasAttribute(attr)) {
+          element.removeAttribute(attr);
+        }
+      });
+    });
+
+    return temp.innerHTML;
+  } catch (error) {
+    console.error('Error al sanitizar HTML:', error);
+    return '';
+  }
 };
 
 /**
@@ -93,7 +141,7 @@ export const extractFirstImage = (html: string): string | null => {
  * @returns Número de palabras
  */
 export const countWords = (html: string): number => {
-  const text = extractBodyContent(html);
+  const text = getPlainTextPreview(html);
   if (!text) return 0;
 
   const words = text.split(/\s+/).filter((word) => word.length > 0);
@@ -113,4 +161,3 @@ export const estimateReadingTime = (
   const wordCount = countWords(html);
   return Math.ceil(wordCount / wordsPerMinute);
 };
-
