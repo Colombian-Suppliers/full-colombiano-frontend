@@ -6,7 +6,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   /**
    * Button variant style
    */
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | 'link';
   /**
    * Button size
    */
@@ -48,6 +48,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       ghost: 'hover:bg-gray-100 text-gray-700',
       danger:
         'bg-red-600 text-white hover:bg-red-700 focus-visible:ring-red-600',
+      link: 'bg-transparent text-primary-600 hover:underline hover:text-primary-700',
     };
 
     const sizeStyles = {
