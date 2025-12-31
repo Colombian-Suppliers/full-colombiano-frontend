@@ -14,12 +14,12 @@ interface CategoryItem {
 const Category = ({ image, label }: CategoryItem) => (
   <div className="flex flex-col items-center gap-3 min-w-[100px]">
     <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-white shadow-lg flex items-center justify-center overflow-hidden border-4 border-white relative">
-      <Image 
-        src={image} 
-        alt={label} 
-        fill 
+      <Image
+        src={image}
+        alt={label}
+        fill
         sizes="(max-width: 768px) 80px, 96px"
-        className="object-cover" 
+        className="object-cover"
       />
     </div>
     <span className="text-xs md:text-sm text-white font-medium">{label}</span>
@@ -32,12 +32,17 @@ export interface CategoriesCarouselProps {
 
 export const CategoriesCarousel = ({
   categories = [
-    { image: '/images/cats/bisuteria.webp', label: 'Bisutería' },
-    { image: '/images/cats/joyeria.webp', label: 'Joyería' },
-    { image: '/images/cats/tejiduria.webp', label: 'Tejeduría' },
-    { image: '/images/cats/telas.webp', label: 'Telas' },
-    { image: '/images/cats/ceramica.webp', label: 'Cerámica' },
-    { image: '/images/cats/alfareria.webp', label: 'Alfarería' },
+    { image: '/images/cats/joyeria.webp', label: 'Moda y accesorios' },
+    {
+      image: '/images/cats/ceramica.webp',
+      label: 'Hogar, muebles y decoracion',
+    },
+    { image: '/images/cats/alfareria.webp', label: 'Alimentos y bebidas' },
+    { image: '/images/cats/tejiduria.webp', label: 'Mascotas' },
+    {
+      image: '/images/cats/bisuteria.webp',
+      label: 'Artesanias y manualidades',
+    },
   ],
 }: CategoriesCarouselProps) => {
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -64,22 +69,16 @@ export const CategoriesCarousel = ({
   };
 
   return (
-    <section
-      className="py-12 lg:py-16 bg-cover bg-right bg-no-repeat relative"
-      style={{ backgroundImage: `url('/images/landing/categories-bg.webp')` }}
-    >
-      <div className="absolute inset-0" />
-
+    <section className="py-12 lg:py-16 relative bg-[#72B059]">
       <div className="relative container mx-auto px-4">
         <h3 className="text-center text-white text-lg md:text-xl mb-8">
-          ¡Descubre la diferentes <span className="font-bold">categorías</span>{' '}
-          <span className="text-[#C5A028]">que tenemos para ti!</span>
+          Encuentra la categoria adecuada para tus productos
         </h3>
 
         <div className="relative flex items-center">
           <button
             onClick={() => scroll('left')}
-            className={`absolute left-0 z-10 w-10 h-10 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center text-white transition-all ${
+            className={`absolute left-0 z-10 w-10 h-10 rounded-full bg-white/30 hover:bg-white/40 flex items-center justify-center text-white transition-all ${
               !canScrollLeft ? 'opacity-50 cursor-not-allowed' : ''
             }`}
             disabled={!canScrollLeft}
@@ -103,7 +102,7 @@ export const CategoriesCarousel = ({
 
           <button
             onClick={() => scroll('right')}
-            className={`absolute right-0 z-10 w-10 h-10 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center text-white transition-all ${
+            className={`absolute right-0 z-10 w-10 h-10 rounded-full bg-white/30 hover:bg-white/40 flex items-center justify-center text-white transition-all ${
               !canScrollRight ? 'opacity-50 cursor-not-allowed' : ''
             }`}
             disabled={!canScrollRight}
@@ -114,7 +113,7 @@ export const CategoriesCarousel = ({
         </div>
 
         <p className="text-center text-white mt-8 text-sm md:text-base">
-          Los mejores productos <span className="font-bold">Colombianos</span>
+          Los mejores productos <span className="font-bold">colombianos</span>
         </p>
       </div>
     </section>
