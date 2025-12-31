@@ -32,7 +32,7 @@ function LoginPageContent() {
   const [isValidating, setIsValidating] = React.useState(false);
   const [loginError, setLoginError] = React.useState<string | null>(null);
 
-  const { register, handleSubmit, watch, formState: { errors } } = useFormValidation<LoginFormData>();
+  const { register, handleSubmit, watch } = useFormValidation<LoginFormData>();
 
   const watchedEmail = watch('email');
   const watchedPassword = watch('password');
