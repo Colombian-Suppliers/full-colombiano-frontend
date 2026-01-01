@@ -20,7 +20,6 @@ vi.mock('next/link', () => ({
     href,
     children,
     ...props
-  }: React.AnchorHTMLAttributes<HTMLAnchorElement> & { href: string }) => (
+  }: React.AnchorHTMLAttributes<HTMLAnchorElement> & { href: string }) =>
     React.createElement('a', { href, ...props }, children),
-  ),
 }));

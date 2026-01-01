@@ -14,7 +14,6 @@
 export * from './shared';
 
 export { default as BuyerStep1PersonalInfo } from './buyer/Step1PersonalInfo';
-export { default as BuyerStep2PersonalInfo } from './buyer/Step2PersonalInfo';
 export { default as BuyerStep3Credentials } from './buyer/Step3Credentials';
 
 export { default as SellerStep1PersonType } from './seller/Step1PersonType';
@@ -34,4 +33,3 @@ export {
 
 // Seller juridica flow
 export * from './seller/juridica';
-

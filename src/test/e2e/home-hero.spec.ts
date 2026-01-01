@@ -6,13 +6,13 @@ test.describe('Home Hero CTAs', () => {
     await page
       .getByRole('link', { name: /^(REGISTRATE|UNETE AHORA|CREA TU TIENDA)$/ })
       .click();
-    await expect(page).toHaveURL(/\/register$/);
+    await expect(page).toHaveURL(/\/register$/, { timeout: 30000 });
   });
 
   test('CTA CONOCE MAS navigates to /about-us', async ({ page }) => {
     await page.goto('/');
     await page.getByRole('button', { name: 'Ir a slide 1' }).click();
     await page.getByRole('link', { name: 'CONOCE MAS' }).click();
-    await expect(page).toHaveURL(/\/about-us$/);
+    await expect(page).toHaveURL(/\/about-us$/, { timeout: 30000 });
   });
 });

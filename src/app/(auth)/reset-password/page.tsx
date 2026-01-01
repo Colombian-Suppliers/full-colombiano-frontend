@@ -62,7 +62,7 @@ function ResetPasswordPageContent() {
       });
 
       toast.success(
-        TOAST_MESSAGES.RESET_PASSWORD_SUCCESS ||
+        TOAST_MESSAGES.PASSWORD_RESET_SUCCESS ||
           'Contraseña actualizada exitosamente'
       );
       router.push(ROUTES.LOGIN);
@@ -70,8 +70,7 @@ function ResetPasswordPageContent() {
       const message =
         error instanceof Error
           ? error.message
-          : TOAST_MESSAGES.RESET_PASSWORD_ERROR ||
-            'Error al actualizar contraseña';
+          : TOAST_MESSAGES.UNKNOWN_ERROR || 'Error al actualizar contraseña';
       toast.error(message);
     } finally {
       setIsLoading(false);
@@ -201,4 +200,3 @@ export default function ResetPasswordPage() {
     </Suspense>
   );
 }
-

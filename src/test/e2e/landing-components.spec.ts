@@ -23,9 +23,9 @@ test.describe('Landing components', () => {
 
   test('Newsletter: shows thank you message on submit', async ({ page }) => {
     await page.goto('/');
-    const input = page.locator('input[aria-label="Correo electronico"]');
+    const input = page.getByLabel(/Correo electr[oó]nico/i);
     await input.fill('user@example.com');
     await page.getByRole('button', { name: 'Suscribirme' }).click();
-    await expect(page.getByText('Gracias por suscribirte!')).toBeVisible();
+    await expect(page.getByText(/Gracias por suscribirte/i)).toBeVisible();
   });
 });

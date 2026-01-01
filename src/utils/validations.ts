@@ -19,9 +19,9 @@ export const validateCC = (value: string): boolean | string => {
   // Remove spaces and trim
   const cleaned = value.trim().replace(/\s/g, '');
   
-  // Must be 6-10 digits
-  if (!/^\d{6,10}$/.test(cleaned)) {
-    return 'La cédula debe tener entre 6 y 10 dígitos numéricos';
+  // Must be 8-10 digits
+  if (!/^\d{8,10}$/.test(cleaned)) {
+    return 'La cédula solo debe contener números y debe tener entre 8 y 10 dígitos';
   }
   
   // Cannot be all zeros
@@ -42,9 +42,9 @@ export const validateCE = (value: string): boolean | string => {
   // Remove spaces and trim
   const cleaned = value.trim().replace(/\s/g, '');
   
-  // Must be 6-10 digits
-  if (!/^\d{6,10}$/.test(cleaned)) {
-    return 'La cédula de extranjería debe tener entre 6 y 10 dígitos numéricos';
+  // Must be 6-7 digits
+  if (!/^\d{6,7}$/.test(cleaned)) {
+    return 'La cédula de extranjería solo debe contener números y debe tener entre 6 y 7 dígitos';
   }
   
   // Cannot be all zeros
@@ -65,9 +65,16 @@ export const validatePassport = (value: string): boolean | string => {
   // Remove spaces and trim
   const cleaned = value.trim().replace(/\s/g, '');
   
-  // Must be 6-12 alphanumeric characters
-  if (!/^[A-Z0-9]{6,12}$/i.test(cleaned)) {
-    return 'El pasaporte debe tener entre 6 y 12 caracteres alfanuméricos (sin espacios ni caracteres especiales)';
+  if (!/^[A-Z0-9]+$/i.test(cleaned)) {
+    return 'El pasaporte solo debe contener letras y números';
+  }
+
+  if (cleaned.length < 8 || cleaned.length > 9) {
+    return 'El pasaporte debe tener entre 8 y 9 caracteres';
+  }
+
+  if (!/[A-Z]/i.test(cleaned) || !/\d/.test(cleaned)) {
+    return 'El pasaporte debe contener letras y números';
   }
   
   return true;
@@ -120,17 +127,20 @@ export const validateDocument = (documentType: string, documentNumber: string): 
     case DOCUMENT_TYPES.NATIONAL_ID:
     case 'national_id':
     case 'cc':
+    case 'CC':
     case 'Cédula de Ciudadanía (CC)':
       return validateCC(documentNumber);
       
     case DOCUMENT_TYPES.FOREIGN_ID:
     case 'foreign_id':
     case 'ce':
+    case 'CE':
     case 'Cédula de Extranjería (CE)':
       return validateCE(documentNumber);
       
     case DOCUMENT_TYPES.PASSPORT:
     case 'passport':
+    case 'PASSPORT':
     case 'Pasaporte':
       return validatePassport(documentNumber);
       
@@ -243,16 +253,21 @@ export const validatePassword = (password: string): boolean | string => {
   // Check for common passwords
   const commonPasswords = [
     'password123',
+    'password123!',
     'qwerty123',
+    'qwerty123!',
     '12345678',
     'abc123456',
     'Colombia123',
+    'Colombia123!',
     'Colombia2024',
+    'Colombia2024!',
     'Password123',
+    'Password123!',
     'P@ssw0rd',
   ];
   
-  if (commonPasswords.includes(password)) {
+  if (commonPasswords.map((p) => p.toLowerCase()).includes(password.toLowerCase())) {
     return 'Esta contraseña es demasiado común. Por favor elige una más segura';
   }
   
@@ -335,8 +350,8 @@ export const validateColombianPhone = (phone: string): boolean | string => {
     return true;
   }
   
-  // Landline with area code: 10 digits starting with 1-9 (not 3)
-  if (/^[124-9]\d{9}$/.test(withoutCountryCode)) {
+  // Landline with area code: 601-608 + 7 digits (e.g., 6012345678)
+  if (/^60[1-8]\d{7}$/.test(withoutCountryCode)) {
     return true;
   }
   
@@ -457,4 +472,3 @@ export default {
   validateFirstName,
   validateLastName,
 };
-
